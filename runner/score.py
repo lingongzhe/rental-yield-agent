@@ -7,13 +7,12 @@
 单房得分说明：
   出租易度：仅由真实维度(楼龄 / 板块真实挂牌租金率)加权，权重重归一化到 100。
   综合分   = 60% 租售比分 + 40% 出租易度分。
-  净回报率 = 租售比扣除保守维护成本口径（真实空置率未知，故保守披露）。
+  净回报率 = 与租售比同口径（真实空置率未知，不虚构扣减，请结合实地核验）。
 """
 from config import (BUDGET_WAN, YIELD_TARGET, YIELD_MID, NET_YIELD_FLOOR,
                     RENT_EASE_FLOOR, W_YIELD, WEIGHTS)
 
 CUR_YEAR = 2026
-_MAINT = 0.04  # 保守维护/空置成本口径（真实空置率未知时的保守披露用）
 
 
 def _clamp(v, lo=0.0, hi=100.0):
@@ -45,7 +44,8 @@ def enrich(house):
     annual = rent_mid * 12.0
     rent_yield = annual / price * 100.0 if price else 0.0
     payback = price / annual if annual else 0.0
-    net_yield = rent_yield * (1 - _MAINT)
+    # 净回报率：真实空置率未知，不虚构扣减，直接以租售比作为回报口径
+    net_yield = rent_yield
 
     # —— 真实数据可计算的维度 ——
     age_score = _age_score(house.get("building_year"))
