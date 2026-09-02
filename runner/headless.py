@@ -35,13 +35,19 @@ def _load_cookies():
 
 
 def _visit(page, url):
-    """带登录态打开一个列表页。返回 ('OK', html) / ('BLOCKED', None) / ('ERR', None)。"""
+    """带登录态打开一个列表页。返回 ('OK', html) / ('BLOCKED', None) / ('ERR', None)。
+
+    识别被抢：标题以 登录/CAPTCHA/Forbidden 开头，或落在 hip.lianjia.com/forbidden
+    （链家风控对无头浏览器最常见的拦截落地页）。不认识的抓取异常按 ERR 处理。
+    """
     try:
         page.goto(url, wait_until="domcontentloaded", timeout=25000)
         page.wait_for_timeout(random.randint(1200, 2200))
         title = page.eval_on_selector("title",
                                       "e => e ? e.textContent : ''").strip()
-        if title.startswith(("登录", "CAPTCHA")):
+        if (title.startswith(("登录", "CAPTCHA", "Forbidden"))
+                or "hip.lianjia.com/forbidden" in page.url
+                or "forbidden" in page.url):
             return "BLOCKED", None
         return "OK", page.content()
     except Exception:  # noqa: BLE001

@@ -40,7 +40,7 @@ def main():
         print("\n[1/4] 离线模式：无法采集真实数据，直接输出提示页。")
         coll_log = ["离线模式(--offline)：不采集数据，不估算。"]
     else:
-        print("\n[1/4] 尝试联网采集(贝壳/链家 · 安居客 · 58同城) ...")
+        print("\n[1/4] 尝试联网采集(链家/贝壳) ...")
         online, fetched, coll_log = collect_online(CITIES, BUDGET)
 
     # 没有拿到任何真实数据 → 生成"无真实数据"提示页，不评分、不估算

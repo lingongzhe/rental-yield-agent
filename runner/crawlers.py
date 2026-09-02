@@ -4,16 +4,28 @@
 【真实数据原则】只返回真实抓取到的数据；抓取失败时返回空并明确记录原因，
 绝不使用内置猜测值。
 
-数据源(链家首页首屏，反爬允许的稳定入口)：
-  1) 二手房在售页 (/ershoufang/)：总价、板块、小区、面积、户型、楼龄。全部真实。
-  2) 租房页     (/zufang/)       ：板块、面积、真实挂牌月租。全部真实。
+【采集策略(2026-09 实测修正)】链家风控会拦截无头浏览器(→ hip.lianjia.com/forbidden)，
+而普通 urllib 请求能正常拿到 SSR 内嵌的真实挂牌数据。因此：
+  1) 主路径 = urllib 直抓，无需浏览器（CI 上同样可用）。
+  2) 二手房走『总价40万以下段 /ershoufang/p1/』：低价房源集中，量比默认首页大；
+     有本机登录态时还尝试翻页；无登录态(如 CI)则用默认首页兜底。
+  3) 租房/ershoufang/、/zufang/ 翻页聚合板块挂牌租金率；有登录态时可翻更多页。
+  4) 无头浏览器降级为“仅当 urllib 一条数据都拿不到”时的本地补充尝试。
+
+数据源(链家，全部真实挂牌)：
+  1) 二手房在售页 (/ershoufang/)：总价、板块、小区、面积、户型、楼龄。
+  2) 租房页     (/zufang/)       ：板块、面积、真实挂牌月租。
 
 关联方式：「板块同档」真实租金——把租房按"板块"聚合出该板块的真实挂牌
 租金率(元/㎡/月)中位数，再对同板块的真实在售房，用 真实租金率 × 真实在售面积
 估算参考月租。租金全部取自真实挂牌记录（只是套到同板块、不同套的房子）。
 板块无真实租金率的在售房，不进入候选（宁缺毋滥）。
 """
+import json
+import os
+import random
 import re
+import time
 import urllib.request
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -24,11 +36,140 @@ COLLECT_LOG = []
 # 城市 -> 链家子域名
 LIANJIA_CITY = {"沈阳": "sy", "大连": "dl"}
 
+# 登录态 cookie 文件（与 headless.login 共用）
+COOKIE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           ".lianjia_cookies.json")
 
-def _fetch_url(url, timeout=12):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
+ESF_P1_MAX_PAGES = 3    # 40万以下段最大翻页数（实测第2页即被CAPTCHA拦，留点余地）
+ZUF_MAX_PAGES = 6       # 租房最大翻页数（带登录态时实测前5页可用）
+PAGE_DELAY = (0.8, 1.5)  # 页间隔随机秒（节流）
+
+
+def _load_cookie_jar():
+    """读取本机保存的链家登录态，拼成 Cookie 头；无则返回 None。"""
+    try:
+        with open(COOKIE_FILE, encoding="utf-8") as f:
+            cks = json.load(f)
+        jar = "; ".join("%s=%s" % (c.get("name"), c.get("value"))
+                        for c in cks if c.get("name") and c.get("value"))
+        return jar or None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _sleep():
+    time.sleep(random.uniform(*PAGE_DELAY))
+
+
+def _fetch_url(url, cookie_jar=None, timeout=15):
+    headers = {"User-Agent": UA, "Accept": "*/*",
+               "Accept-Language": "zh-CN,zh;q=0.9",
+               "Referer": "https://sy.lianjia.com/"}
+    if cookie_jar:
+        headers["Cookie"] = cookie_jar
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.read().decode("utf-8", "ignore")
+
+
+def _page_title(html):
+    m = re.search(r"<title>(.*?)</title>", html or "", re.S)
+    return (m.group(1).strip() if m else "") or ""
+
+
+def _page_blocked(html, title="", url=""):
+    """链家风控页识别：登录/CAPTCHA/Forbidden 页。"""
+    if not html:
+        return True
+    if "forbidden" in url or "hip.lianjia.com/forbidden" in html:
+        return True
+    if title.startswith(("登录", "CAPTCHA", "Forbidden")):
+        return True
+    return False
+
+
+def _collect_ershoufang(sub, city, budget, jar, log):
+    """urllib 抓二手房：40万以下段 p1（翻页) + 默认首页兜底。"""
+    houses, seen = [], set()
+    urls = []
+    if jar:
+        urls.append("https://{s}.lianjia.com/ershoufang/p1/".format(s=sub))
+        urls += ["https://{s}.lianjia.com/ershoufang/pg{d}/p1/".format(s=sub, d=i)
+                 for i in range(2, ESF_P1_MAX_PAGES + 1)]
+    urls.append("https://{s}.lianjia.com/ershoufang/".format(s=sub))  # 兜底
+    for u in urls:
+        label = u.split("lianjia.com/")[-1]
+        try:
+            html = _fetch_url(u, jar)
+        except Exception as exc:  # noqa: BLE001
+            log.append("链家·{c}二手房: {p} 抓取失败({t})".format(
+                c=city, p=label, t=type(exc).__name__))
+            break
+        title = _page_title(html)
+        if _page_blocked(html, title, u):
+            log.append("链家·{c}二手房: {p} {w} → 停止翻页".format(
+                c=city, p=label, w=title[:14] or "风控"))
+            break
+        if "totalPrice" not in html:
+            log.append("链家·{c}二手房: {p} 无可解析列表".format(c=city, p=label))
+            continue
+        for h in parse_ershoufang_html(html, city, budget):
+            key = (h["community"], h["price_wan"], h["area"])
+            if key not in seen:
+                seen.add(key)
+                houses.append(h)
+        if u.endswith("/ershoufang/"):
+            break  # 默认首页只抓一页
+        _sleep()
+    log.append("链家·{c}: 二手房累计 {n} 条 <={b}万".format(c=city, n=len(houses), b=budget))
+    return houses
+
+
+def _collect_zufang(sub, city, jar, log):
+    """urllib 抓租房并聚合板块挂牌租金率（有登录态可多翻几页）。"""
+    rates, max_pg = {}, ZUF_MAX_PAGES if jar else 1
+    for pg in range(1, max_pg + 1):
+        u = ("https://{s}.lianjia.com/zufang/".format(s=sub) if pg == 1
+             else "https://{s}.lianjia.com/zufang/pg{d}/".format(s=sub, d=pg))
+        try:
+            html = _fetch_url(u, jar)
+        except Exception as exc:  # noqa: BLE001
+            log.append("链家·{c}租房: 第{p}页抓取失败({t})".format(
+                c=city, p=pg, t=type(exc).__name__))
+            break
+        if _page_blocked(html, _page_title(html), u):
+            log.append("链家·{c}租房: 第{p}页被风控 → 停止".format(c=city, p=pg))
+            break
+        if "content__list" not in html:
+            log.append("链家·{c}租房: 第{p}页无可解析列表 → 停止".format(c=city, p=pg))
+            break
+        for name, info in parse_zufang_html(html).items():
+            rates.setdefault(name, []).append(info["rate"])
+        if pg >= max_pg:
+            break
+        _sleep()
+    rent = {}
+    for name, rs in rates.items():
+        srs = sorted(rs)
+        rent[name] = {"rate": round(srs[len(srs) // 2], 2), "samples": len(rs)}
+    log.append("链家·{c}: 聚合到 {n} 个板块的真实挂牌租金率".format(c=city, n=len(rent)))
+    return rent
+
+
+def _collect_urllib(cities, budget, jar, log):
+    """urllib 直抓主路径（无需浏览器，CI 亦可用）。"""
+    fetched = []
+    for city in cities:
+        sub = LIANJIA_CITY.get(city)
+        if not sub:
+            continue
+        houses = _collect_ershoufang(sub, city, budget, jar, log)
+        rent = _collect_zufang(sub, city, jar, log)
+        joined = _join_houses(houses, rent)
+        log.append("链家·{c}: 关联真实板块租金 {j}/{t} 条".format(
+            c=city, j=len(joined), t=len(houses)))
+        fetched.extend(joined)
+    return fetched
 
 
 def _clean(html):
@@ -180,43 +321,52 @@ def _join_houses(houses, plate_rent):
 
 
 def collect_online(cities, budget):
-    """链家真实抓取：二手房总价 + 租房板块租金率 => 关联出候选房源。
+    """链家真实抓取：urllib 直抓为主，无头浏览器仅做兜底。
 
-    优先走【登录态无头批量采集】(量大)；若本机已保存链家登录态则用之翻页，
-    否则回退到免费的首页首屏。全部失败时返回 (False, None, 说明)，交由
-    main 生成提示页。对真实在售房，仅当所在板块存在真实挂牌租金率时才计入。
+    优先级：
+      1) urllib 直抓（无需浏览器，本机/CI 均可用）——带登录态自动走
+         40万以下低价段+租房翻页（量大），无登录态用免费首页（量小）。
+      2) 仅当 urllib 一条数据都没拿到时，才尝试本机登录态无头批量采集
+         （链家风控会拦截无头浏览器，实测多为 Forbidden，仅作为补救）。
+
+    真实数据原则：只有能关联到板块真实挂牌租金率的在售房才计入候选；
+    全部失败时返回 (False, None, 说明)，交由 main 生成提示页。
     """
     global COLLECT_LOG
     COLLECT_LOG = []
-    # 登录态无头批量采集（量大）：本机已保存链家登录态时优先走它
+    jar = _load_cookie_jar()
+    if jar:
+        COLLECT_LOG.append("已加载本机链家登录态({n} cookies) → 走低价段+翻页高量采集".format(
+            n=len(jar.split(";")))
+        )
+
+    # 【首选源】贝壳官方真实数据（本机已装 beike CLI + Key）：官方租售比/挂牌租金
+    beike_data = None
     try:
-        import headless as _hd
-        if _hd.has_saved_state():
-            ok, fetched, log = _hd.collect_online_headless(cities, budget)
-            COLLECT_LOG[:] = log
-            return ok, fetched, COLLECT_LOG
+        import beike_source as _bk
+        if _bk.available():
+            _bl = []
+            _okb, beike_data, _ = _bk.collect_beike(cities, budget, _bl)
+            COLLECT_LOG.extend(_bl)
     except Exception as exc:  # noqa: BLE001
-        COLLECT_LOG.append("无头登录态采集不可用({}) → 回退首页首屏".format(type(exc).__name__))
+        COLLECT_LOG.append("贝壳官方数据源报错({})".format(type(exc).__name__))
+    if beike_data:
+        COLLECT_LOG.append("→ 本次采用贝壳官方数据源（优先于链家爬虫），共{}条".format(
+            len(beike_data)))
+        return True, beike_data, COLLECT_LOG
 
-    fetched = []
-    for city in cities:
-        houses = []
+    fetched = _collect_urllib(cities, budget, jar, COLLECT_LOG)
+
+    # urllib 没拿到任何数据时，才轮到无头浏览器补救（可能被风控拦掉）
+    if not fetched:
         try:
-            houses = collect_ershoufang(city, budget)
-            COLLECT_LOG.append("链家二手房·{}: 取得 {} 条 <={}万的真实在售房源".format(city, len(houses), budget))
+            import headless as _hd
+            ok, extra, log = _hd.collect_online_headless(cities, budget)
+            COLLECT_LOG.extend(log)
+            if ok and extra:
+                fetched = extra
         except Exception as exc:  # noqa: BLE001
-            COLLECT_LOG.append("链家二手房·{}: 抓取失败({})".format(city, type(exc).__name__))
-
-        plate_rent = {}
-        try:
-            plate_rent = collect_plate_rent(city)
-            COLLECT_LOG.append("链家租房·{}: 解析到 {} 个板块的真实挂牌租金率".format(city, len(plate_rent)))
-        except Exception as exc:  # noqa: BLE001
-            COLLECT_LOG.append("链家租房·{}: 抓取失败({})".format(city, type(exc).__name__))
-
-        joined = _join_houses(houses, plate_rent)
-        COLLECT_LOG.append("链家·{}: 关联真实板块租金 {}/{} 条".format(city, len(joined), len(houses)))
-        fetched.extend(joined)
+            COLLECT_LOG.append("无头补充采集不可用({})".format(type(exc).__name__))
 
     if not fetched:
         COLLECT_LOG.append("本次未获取到任何真实在线数据 → 不输出估算结果")

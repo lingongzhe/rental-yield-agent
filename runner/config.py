@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """全局配置：预算、筛选阈值、评分权重、板块画像。改这里即可调智能体口味。"""
+import datetime
 
 BUDGET_WAN = 30.0          # 总价硬性上限（万元）
 YIELD_TARGET = 4.0         # 租售比目标线(%)，达到给满分
@@ -7,7 +8,7 @@ YIELD_MID = 2.5            # 租售比中间线(%)，低于此给低分
 NET_YIELD_FLOOR = 3.5      # 净回报率门槛(%)，低于不进推荐
 RENT_EASE_FLOOR = 60.0     # 出租易度分门槛，低于不进推荐
 TOP_N = 6                  # 每城推荐条数
-CURR_FILE = "2026-09-02"   # 行情日期，仅用于展示
+CURR_FILE = datetime.date.today().isoformat()   # 行情日期：自动取当天，仅用于展示
 
 # 出租容易度评分权重（合计100）
 WEIGHTS = {
