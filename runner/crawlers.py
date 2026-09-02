@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 """在线数据采集模块。
-三个平台(贝壳/链家、安居客、58同城)的采集函数。反爬强且本站需遵守条款，
-因此采取"尽力抓取 + 失败安全回退"策略：任一平台取数失败不影响整体，
-main 会用 demo_data 兜底，并在报告中明确标注数据来源。
+三个平台(贝壳/链家、安居客、58同城)的采集函数。
+【真实数据原则】只返回真实抓取到的数据；抓取失败时返回空并明确记录原因，
+绝不使用内置猜测值。main 在拿不到任何真实数据时会生成"无真实数据"提示页。
 """
 import json
 import urllib.request
-
-from demo_data import DEMO_HOUSES
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
@@ -37,7 +35,11 @@ def collect_58(city, budget):
 
 
 def collect_online(cities, budget):
-    """尝试各平台联网采集；全部失败时返回(False, None, 说明)。"""
+    """尝试各平台联网采集；全部失败时返回 (False, None, 说明)。
+
+    只返回真实抓取结果。没有任何真实数据时返回 None，
+    交由 main 生成"未获取到真实数据"提示页，绝不回退猜测值。
+    """
     global COLLECT_LOG
     COLLECT_LOG = []
     fetched = []
@@ -49,18 +51,18 @@ def collect_online(cities, budget):
                 rows = fn(city, budget)
                 if rows:
                     fetched.extend(rows)
-                    COLLECT_LOG.append("{}·{}. 取得 {} 条".format(name, city, len(rows)))
-            except Exception as exc:  # noqa: BLE001  联网失败属预期，回退
+                    COLLECT_LOG.append("{}·{}. 取得 {} 条真实数据".format(name, city, len(rows)))
+            except Exception as exc:  # noqa: BLE001  联网失败属预期
                 COLLECT_LOG.append("{}·{}: 网络/反爬失败({}). 已跳过".format(name, city, type(exc).__name__))
     if not fetched:
-        COLLECT_LOG.append("未获取到在线数据 → 使用内置行情样本(默认自动回退)")
+        COLLECT_LOG.append("本次未获取到任何真实在线数据 → 不输出估算结果")
         return False, None, COLLECT_LOG
     return True, fetched, COLLECT_LOG
 
 
 def fallback_houses():
-    """内置行情样本 → 统一为结构化字典列表。"""
-    return [dict(h) for h in DEMO_HOUSES]
+    """已移除猜测样本回退。保证永远返回空，避免影响判断。"""
+    return []
 
 
 if __name__ == "__main__":

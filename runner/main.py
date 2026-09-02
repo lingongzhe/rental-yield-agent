@@ -11,9 +11,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config import CURR_FILE                     # noqa: E402
-from crawlers import collect_online, fallback_houses  # noqa: E402
+from crawlers import collect_online              # noqa: E402
 from score import run                            # noqa: E402
-from report import write_report, build_html      # noqa: E402
+from report import write_report, build_html, build_no_data_html  # noqa: E402
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(ROOT, "output")
@@ -34,23 +34,31 @@ def main():
     print("  预算 ≤{b}万 · 推荐线 净回报≥3.5% · 出租易度≥60".format(b=BUDGET))
     print("=" * 62)
 
-    # 1) 取数
-    online = False
-    if not args.offline:
+    # 1) 取数（只认真实数据，绝不回退猜测样本）
+    online, fetched, coll_log = False, None, []
+    if args.offline:
+        print("\n[1/4] 离线模式：无法采集真实数据，直接输出提示页。")
+        coll_log = ["离线模式(--offline)：不采集数据，不估算。"]
+    else:
         print("\n[1/4] 尝试联网采集(贝壳/链家 · 安居客 · 58同城) ...")
         online, fetched, coll_log = collect_online(CITIES, BUDGET)
-        if online and fetched:
-            houses = fetched
-            print("      在线取数成功：{} 条".format(len(houses)))
-        else:
-            print("      未能联网取数，自动回退内置行情样本。")
-            houses = fallback_houses()
-    else:
-        print("\n[1/4] 离线模式 → 使用内置行情样本。")
-        houses = fallback_houses()
-        online, fetched, coll_log = False, None, ["离线模式(--offline)：使用内置行情样本。"]
+
+    # 没有拿到任何真实数据 → 生成"无真实数据"提示页，不评分、不估算
+    if not (online and fetched):
+        os.makedirs(OUT_DIR, exist_ok=True)
+        html = build_no_data_html(
+            date=CURR_FILE, coll_log=coll_log, offline=args.offline)
+        write_report(OUT_HTML, html)
+        print("\n[提示] 本次未获取到任何真实数据，已生成提示页(未估算、未打分)。")
+        print("  报告已生成： {path}".format(path=OUT_HTML))
+        if args.open:
+            _open_browser(OUT_HTML)
+        return 0
+
+    print("      在线取数成功：{} 条真实数据".format(len(fetched)))
 
     print("[2/4] 清洗 → 打分(租售比/回本/净回报/出租易度/综合分) ...")
+    houses = [dict(h) for h in fetched]
     recs = run(houses)
     n_rec = sum(1 for r in recs if r["recommend"])
     print("      共 {total} 套，其中达标推荐 {ok} 套。".format(total=len(recs), ok=n_rec))

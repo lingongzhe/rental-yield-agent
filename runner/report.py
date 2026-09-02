@@ -392,3 +392,54 @@ def write_report(path, html):
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
     return path
+
+
+def build_no_data_html(date, coll_log, offline=False):
+    """没有任何真实数据时生成的提示页：明确告知，不估算、不打分。"""
+    src_html = "".join('<div class="log">• ' + (line or "") + "</div>" for line in coll_log)
+    if offline:
+        tip = ("本次以离线模式运行，未采集任何真实数据。程序不会用估算值代替，"
+               "因此不生成任何推荐结果。请在有网络时在线运行，或接入可用的真实数据源。")
+    else:
+        tip = ("本次联网采集未获取到任何真实房源/板块数据（可能因目标平台反爬限制）。"
+               "为避免用虚拟数据影响你的判断，程序不输出任何估算分数或推荐标的。")
+    return _NO_DATA_TEMPLATE.format(date=date, src_html=src_html, tip=tip)
+
+
+_NO_DATA_TEMPLATE = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>未获取到真实数据 · 沈阳大连老破小收租筛选</title>
+<style>
+  :root{{--accent:#1a66ff;--accent2:#10a37f;--warn:#e08a2e;--bad:#d64550;
+        --ink:#1b2333;--muted:#64708c;--rule:#e6eaf3;--bg:#eef1f8;}}
+  *{{box-sizing:border-box}}
+  body{{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);
+       background:var(--bg);line-height:1.7;font-size:15px}}
+  .wrap{{max-width:760px;margin:0 auto;padding:48px 20px}}
+  .box{{background:#fff;border:1px solid var(--rule);border-radius:20px;padding:34px 30px;
+        box-shadow:0 8px 30px rgba(27,35,51,.08)}}
+  .badge{{display:inline-block;background:#fdf0df;color:var(--warn);font-weight:800;
+         font-size:12.5px;padding:3px 12px;border-radius:999px;letter-spacing:.05em}}
+  h1{{font-size:24px;margin:16px 0 8px}}
+  p{{color:#3a4560;margin:6px 0}}
+  .tip{{background:#fdf0df;border-left:5px solid var(--warn);border-radius:12px;
+       padding:14px 16px;margin:20px 0}}
+  .log{{font-size:12.5px;color:var(--muted);margin-top:18px}}
+  .log div{{padding:3px 0;border-bottom:1px dashed var(--rule)}}
+  a{{color:var(--accent)}}
+</style></head>
+<body><div class="wrap"><div class="box">
+  <span class="badge">真实数据原则</span>
+  <h1>本次未获取到真实数据</h1>
+  <p>为了不误导你的判断，本程序只展示真实抓取到的数据。本次运行没有拿到任何真实的房源或板块数据，
+     因此<b>不生成任何估算分数、不输出推荐标的</b>。</p>
+  <div class="tip"><b>说明：</b>{tip}</div>
+  <p>可选做法：</p>
+  <p>① 稍后在有网络的电脑上重试在线采集；</p>
+  <p>② 接入一个可用的真实数据源（自备数据文件/API 即可），由程序读取真实数据后再评分。</p>
+  <div class="log">数据采集日志：{src_html}
+    <div>生成日期 {date}</div>
+  </div>
+</div></div></body></html>
+"""
