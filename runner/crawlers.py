@@ -41,16 +41,8 @@ def _parse_area(text):
     return float(m.group(1)) if m else None
 
 
-def collect_ershoufang(city, budget):
-    """链家二手房在售（总价<=budget 的真实房源）。"""
-    sub = LIANJIA_CITY.get(city)
-    if not sub:
-        return []
-    url = "https://{sub}.lianjia.com/ershoufang/".format(sub=sub)
-    html = _fetch_url(url)
-    if not html or "totalPrice" not in html:
-        return []
-
+def parse_ershoufang_html(html, city, budget):
+    """从一个二手房列表页 HTML 解析出总价<=budget 的真实房源。"""
     prices = re.findall(r'class="totalPrice totalPrice2">(.*?)</div>', html, re.S)
     pos = re.findall(r'class="positionInfo">(.*?)</div>', html, re.S)
     infos = re.findall(r'class="houseInfo">(.*?)</div>', html, re.S)
@@ -108,20 +100,20 @@ def collect_ershoufang(city, budget):
     return out
 
 
-def collect_plate_rent(city):
-    """链家租房：聚合同板块真实挂牌租金率(元/㎡/月)中位数。
-
-    返回 {板块名: {"rate": 元/㎡/月中位, "samples": 样本条数}}。
-    只统计"区 - 板块 - 小区"完整、且有面积的真实挂牌。
-    """
+def collect_ershoufang(city, budget):
+    """链家二手房在售（总价<=budget 的真实房源）。"""
     sub = LIANJIA_CITY.get(city)
     if not sub:
-        return {}
-    url = "https://{sub}.lianjia.com/zufang/".format(sub=sub)
+        return []
+    url = "https://{sub}.lianjia.com/ershoufang/".format(sub=sub)
     html = _fetch_url(url)
-    if not html or "content__list" not in html:
-        return {}
+    if not html or "totalPrice" not in html:
+        return []
+    return parse_ershoufang_html(html, city, budget)
 
+
+def parse_zufang_html(html):
+    """从一个租房列表页 HTML 聚合出 {板块: 中位租金率(元/㎡/月), 样本数}。"""
     des = re.findall(r'<p class="content__list--item--des">(.*?)</p>', html, re.S)
     prices = re.findall(r'<span class="content__list--item-price">(.*?)</span>', html, re.S)
 
@@ -160,14 +152,52 @@ def collect_plate_rent(city):
     return out
 
 
+def collect_plate_rent(city):
+    """链家租房：聚合同板块真实挂牌租金率(元/㎡/月)中位数(仅首屏)。"""
+    sub = LIANJIA_CITY.get(city)
+    if not sub:
+        return {}
+    url = "https://{sub}.lianjia.com/zufang/".format(sub=sub)
+    html = _fetch_url(url)
+    if not html or "content__list" not in html:
+        return {}
+    return parse_zufang_html(html)
+
+
+def _join_houses(houses, plate_rent):
+    """用板块真实挂牌租金率为每套在售房估算参考月租(真实口径，同板块套用)。"""
+    joined = []
+    for h in houses:
+        info = plate_rent.get(h["plate"])
+        if not info or not h.get("area"):
+            continue
+        ref_rent = int(round(info["rate"] * h["area"]))
+        rec = dict(h)
+        rec["rent"] = (ref_rent, ref_rent, ref_rent)
+        rec["rent_basis"] = info  # 记录租金估算依据(真实挂牌)
+        joined.append(rec)
+    return joined
+
+
 def collect_online(cities, budget):
     """链家真实抓取：二手房总价 + 租房板块租金率 => 关联出候选房源。
 
-    全部失败时返回 (False, None, 说明)，交由 main 生成提示页。
-    对真实在售房，仅当所在板块存在真实挂牌租金率时才计入；否则宁缺毋滥。
+    优先走【登录态无头批量采集】(量大)；若本机已保存链家登录态则用之翻页，
+    否则回退到免费的首页首屏。全部失败时返回 (False, None, 说明)，交由
+    main 生成提示页。对真实在售房，仅当所在板块存在真实挂牌租金率时才计入。
     """
     global COLLECT_LOG
     COLLECT_LOG = []
+    # 登录态无头批量采集（量大）：本机已保存链家登录态时优先走它
+    try:
+        import headless as _hd
+        if _hd.has_saved_state():
+            ok, fetched, log = _hd.collect_online_headless(cities, budget)
+            COLLECT_LOG[:] = log
+            return ok, fetched, COLLECT_LOG
+    except Exception as exc:  # noqa: BLE001
+        COLLECT_LOG.append("无头登录态采集不可用({}) → 回退首页首屏".format(type(exc).__name__))
+
     fetched = []
     for city in cities:
         houses = []
@@ -184,18 +214,9 @@ def collect_online(cities, budget):
         except Exception as exc:  # noqa: BLE001
             COLLECT_LOG.append("链家租房·{}: 抓取失败({})".format(city, type(exc).__name__))
 
-        joined = 0
-        for h in houses:
-            info = plate_rent.get(h["plate"])
-            if not info or not h.get("area"):
-                continue
-            ref_rent = int(round(info["rate"] * h["area"]))
-            rec = dict(h)
-            rec["rent"] = (ref_rent, ref_rent, ref_rent)
-            rec["rent_basis"] = info  # 记录租金估算依据(真实挂牌)
-            fetched.append(rec)
-            joined += 1
-        COLLECT_LOG.append("链家·{}: 关联真实板块租金 {}/{} 条".format(city, joined, len(houses)))
+        joined = _join_houses(houses, plate_rent)
+        COLLECT_LOG.append("链家·{}: 关联真实板块租金 {}/{} 条".format(city, len(joined), len(houses)))
+        fetched.extend(joined)
 
     if not fetched:
         COLLECT_LOG.append("本次未获取到任何真实在线数据 → 不输出估算结果")

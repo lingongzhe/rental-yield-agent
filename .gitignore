@@ -10,3 +10,6 @@ Thumbs.db
 
 # 本地运行产物
 runner/output/daily.log
+
+# 敏感：链家登录态 Cookie（仅本机，绝不提交）
+runner/.lianjia_cookies.json
