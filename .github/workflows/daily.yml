@@ -26,15 +26,23 @@ jobs:
 
       - name: 运行收租筛选智能体，采集真实数据并生成可视化报告
         working-directory: runner
-        run: python main.py
+        run: |
+          python main.py
+          # 保护：本次若未抓到真实数据(生成的是提示页)，则不覆盖线上真实内容
+          if grep -q "未获取到真实数据" output/rental-report.html; then
+            echo "本次为提示页(未抓到真实数据)，线上保持上次真实内容，不推送覆盖"
+            echo "NO_REAL=1" >> "$GITHUB_ENV"
+          fi
 
-      - name: 同步生成 GitHub Pages 站点（docs/index.html）
+      - name: 同步生成 GitHub Pages 站点（仅在有真实数据时）
+        if: env.NO_REAL != '1'
         run: |
           mkdir -p docs
           cp runner/output/rental-report.html docs/index.html
           cp runner/scoring-basis.html docs/scoring-basis.html
 
       - name: 提交并推送刷新结果
+        if: env.NO_REAL != '1'
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
