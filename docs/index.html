@@ -1,36 +1,231 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8">
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>未获取到真实数据 · 沈阳大连老破小收租筛选</title>
+<title>沈阳·大连 30万内老破小 收租筛选报告</title>
 <style>
   :root{--accent:#1a66ff;--accent2:#10a37f;--warn:#e08a2e;--bad:#d64550;
         --ink:#1b2333;--muted:#64708c;--rule:#e6eaf3;--bg:#eef1f8;}
   *{box-sizing:border-box}
   body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);
-       background:var(--bg);line-height:1.7;font-size:15px}
-  .wrap{max-width:760px;margin:0 auto;padding:48px 20px}
-  .box{background:#fff;border:1px solid var(--rule);border-radius:20px;padding:34px 30px;
-        box-shadow:0 8px 30px rgba(27,35,51,.08)}
-  .badge{display:inline-block;background:#fdf0df;color:var(--warn);font-weight:800;
-         font-size:12.5px;padding:3px 12px;border-radius:999px;letter-spacing:.05em}
-  h1{font-size:24px;margin:16px 0 8px}
-  p{color:#3a4560;margin:6px 0}
-  .tip{background:#fdf0df;border-left:5px solid var(--warn);border-radius:12px;
-       padding:14px 16px;margin:20px 0}
-  .log{font-size:12.5px;color:var(--muted);margin-top:18px}
-  .log div{padding:3px 0;border-bottom:1px dashed var(--rule)}
-  a{color:var(--accent)}
-</style></head>
-<body><div class="wrap"><div class="box">
-  <span class="badge">真实数据原则</span>
-  <h1>本次未获取到真实数据</h1>
-  <p>为了不误导你的判断，本程序只展示真实抓取到的数据。本次运行没有拿到任何真实的房源或板块数据，
-     因此<b>不生成任何估算分数、不输出推荐标的</b>。</p>
-  <div class="tip"><b>说明：</b>本次联网采集未获取到任何真实房源/板块数据（可能因目标平台反爬限制）。为避免用虚拟数据影响你的判断，程序不输出任何估算分数或推荐标的。</div>
-  <p>可选做法：</p>
-  <p>① 稍后在有网络的电脑上重试在线采集；</p>
-  <p>② 接入一个可用的真实数据源（自备数据文件/API 即可），由程序读取真实数据后再评分。</p>
-  <div class="log">数据采集日志：<div class="log">• 链家二手房·沈阳: 取得 0 条 <=30万的真实在售房源</div><div class="log">• 链家租房·沈阳: 解析到 0 个板块的真实挂牌租金率</div><div class="log">• 链家·沈阳: 关联真实板块租金 0/0 条</div><div class="log">• 链家二手房·大连: 取得 0 条 <=30万的真实在售房源</div><div class="log">• 链家租房·大连: 解析到 0 个板块的真实挂牌租金率</div><div class="log">• 链家·大连: 关联真实板块租金 0/0 条</div><div class="log">• 本次未获取到任何真实在线数据 → 不输出估算结果</div>
-    <div>生成日期 2026-09-02</div>
-  </div>
-</div></div></body></html>
+       background:var(--bg);line-height:1.6;font-size:15px;
+       background-image:radial-gradient(90rem 54rem at 8% -4%,rgba(26,102,255,.08),transparent 60%),
+                        radial-gradient(80rem 52rem at 100% 10%,rgba(16,163,127,.08),transparent 60%);}
+  .wrap{max-width:1020px;margin:0 auto;padding:26px 18px 64px}
+
+  /* --- 标题横幅 --- */
+  .hero{background:linear-gradient(135deg,#16224f 0%,#1d3a78 48%,#0e8a74 100%);
+        border-radius:22px;padding:40px 36px 32px;color:#fff;
+        box-shadow:0 14px 40px rgba(22,34,79,.28);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:230px;height:230px;
+        border-radius:50%;background:rgba(255,255,255,.07)}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .badges span{font-size:12px;font-weight:700;letter-spacing:.03em;color:#e8f0ff;
+        border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+        padding:4px 12px;border-radius:999px}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:-.3px;margin:0 0 8px}
+  .hero .sub{color:rgba(255,255,255,.78);font-size:13.5px}
+  .hero .kv{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px}
+  .hero .kv div{font-size:13px;color:rgba(255,255,255,.85)}
+  .hero .kv b{color:#fff;font-weight:700}
+
+  /* --- 区块标题 --- */
+  .sec-t{display:flex;align-items:center;gap:10px;margin:34px 0 14px}
+  .sec-t .dot{width:10px;height:10px;border-radius:3px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  .sec-t h2{font-size:20px;font-weight:800;margin:0;letter-spacing:-.2px}
+  .sec-t .cnt{font-size:12px;color:var(--muted);font-weight:600;background:rgba(255,255,255,.7);
+      border:1px solid var(--rule);padding:2px 10px;border-radius:999px}
+
+  /* --- KPI --- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:22px}
+  .kpi{background:rgba(255,255,255,.86);border:1px solid var(--rule);border-radius:16px;
+       padding:16px 18px;box-shadow:0 2px 8px rgba(27,35,51,.04)}
+  .kpi .n{font-size:30px;font-weight:800;letter-spacing:-.5px;
+       background:linear-gradient(135deg,var(--accent),var(--accent2));
+       -webkit-background-clip:text;background-clip:text;color:transparent}
+  .kpi .l{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+  /* --- 结论 --- */
+  .callout{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,.86);
+       border:1px solid var(--rule);border-left:5px solid var(--accent);
+       border-radius:14px;padding:16px 18px;margin:18px 0;box-shadow:0 2px 10px rgba(27,35,51,.05)}
+  .callout.ok{border-left-color:var(--accent2)}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout .c-ico{font-size:20px;line-height:1.4;color:var(--accent2)}
+  .callout b{font-size:15px;color:var(--ink)}
+  .callout p{margin:6px 0 0;color:#3a4560}
+
+  /* --- 对比图面板 --- */
+  .panel{background:rgba(255,255,255,.86);border:1px solid var(--rule);border-radius:18px;
+        padding:20px 22px;box-shadow:0 2px 10px rgba(27,35,51,.04)}
+
+  /* --- 房源卡片（双列） --- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+  .card{position:relative;background:#fff;border:1px solid var(--rule);border-radius:16px;
+        overflow:hidden;display:flex;flex-direction:column;
+        box-shadow:0 3px 14px rgba(27,35,51,.05);transition:.15s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(27,35,51,.10)}
+  .card .accent-bar{height:5px;width:100%}
+  .card.sy .accent-bar{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .card.dl .accent-bar{background:linear-gradient(90deg,var(--accent2),var(--accent))}
+  .card-head{display:flex;align-items:center;gap:12px;padding:14px 16px 0}
+  .card-head .emblem{flex:0 0 38px;height:38px;border-radius:11px;color:#fff;font-weight:800;
+        font-size:18px;display:flex;align-items:center;justify-content:center}
+  .card-head .t{flex:1;min-width:0}
+  .card-head .plate{font-size:15.5px;font-weight:700}
+  .card-head .comm{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-head .rank{font-size:12px;font-weight:800;letter-spacing:.04em}
+  .meta{color:var(--muted);font-size:12px;margin:6px 16px 12px;padding-bottom:10px;
+        border-bottom:1px dashed var(--rule)}
+  .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px}
+  .num{background:#f6f8fc;border:1px solid var(--rule);border-radius:10px;padding:7px 9px}
+  .num .lab{font-size:11px;color:var(--muted)}
+  .num .val{font-size:16px;font-weight:600;margin-top:1px;color:var(--ink)}
+  .num .val.strong{font-weight:800}
+  .num .val.accent{color:var(--accent)}
+  .bars{margin:12px 16px 8px}
+  .bar-row{display:flex;align-items:center;gap:9px;margin:6px 0}
+  .b-lab{width:52px;font-size:12px;color:var(--muted)}
+  .bar{flex:1;height:9px;background:#eef1f8;border-radius:6px;overflow:hidden}
+  .fill{height:100%;border-radius:6px}
+  .b-val{width:44px;font-size:12px;color:var(--ink);font-weight:700;text-align:right}
+  .foot{margin-top:auto;padding:10px 16px 14px;border-top:1px solid var(--rule);
+        background:#fbfcfe;border-radius:0 0 16px 16px}
+  .reason{font-size:13px;color:#3a4560;margin:0 0 8px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px}
+
+  /* --- 表格 --- */
+  .table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:16px;background:#fff;
+        box-shadow:0 2px 10px rgba(27,35,51,.04)}
+  table{border-collapse:collapse;width:100%;min-width:760px;font-size:13.5px}
+  th{position:sticky;top:0;z-index:1;background:#f2f5fb;text-align:left;padding:10px 12px;
+       color:var(--muted);font-weight:700;border-bottom:1px solid var(--rule)}
+  td{padding:9px 12px;border-bottom:1px solid var(--rule)}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:rgba(94,110,150,.045)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tb-ok{color:#0a8a6a;font-weight:700;background:#e7f7f0;padding:1px 8px;border-radius:999px;font-size:12px}
+
+  /* --- 来源/说明 --- */
+  .log{font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--rule);
+       border-radius:14px;padding:12px 16px}
+  .log div{padding:2px 0}
+  .gamma{font-size:12px;color:var(--muted);margin-top:16px}
+
+  @media(max-width:680px){
+    body{font-size:14px}
+    .wrap{padding:16px 12px 40px}
+    .hero{padding:26px 20px;border-radius:18px}
+    .hero h1{font-size:23px}
+    .grid{grid-template-columns:1fr}
+    .nums{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body><div class="wrap">
+
+  <header class="hero">
+    <div class="badges"><span>纯投资收租</span><span>沈阳</span><span>大连</span>
+      <span>总价 &lt;30万</span><span>多源爬取 + 评分</span></div>
+    <h1>沈阳 · 大连  30万内老破小「收租」筛选报告</h1>
+    <div class="sub">生成日期 2026-09-02 · 由智能体自动计算并打分 · 仅供参考，不构成投资建议</div>
+    <div class="kv"><div>预算红线（万元）<b>&nbsp;&lt; 30</b></div>
+      <div>数据来源<b>&nbsp;贝壳/链家 · 安居客 · 58（含回退样本）</b></div>
+      <div>筛选维度<b>&nbsp;租售比 · 回本 · 出租易度</b></div></div>
+    <div class="kpis"><div class="kpi"><div class="n">2</div><div class="l">推荐标的 · 两城合计</div></div><div class="kpi"><div class="n">7.6%</div><div class="l">沈阳 · 最佳租售比</div></div><div class="kpi"><div class="n">—</div><div class="l">大连 · 最佳租售比</div></div><div class="kpi"><div class="n">&lt;30万</div><div class="l">单价红线 · 总价上限</div></div>
+  </header>
+
+  <div class="callout ok"><span class="c-ico">✦</span><div><b>结论</b><p>优先考虑 <b>道义 · 荣盛香缇澜山二期</b>：估算月租约1583.0元、租售比7.5984%、约13年回本、出租易度68.4分。</p></div></div>
+
+  <div class="panel"><svg viewBox="0 0 940 236" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><text x="232" y="28" font-family="Microsoft YaHei" font-size="18" font-weight="700" fill="#1b2333">重点板块 · 30万内老破小 年租金回报率 (%)</text><text x="218" y="70" font-family="Microsoft YaHei" font-size="14" font-weight="600" fill="#3a4560" text-anchor="end">沈阳·道义</text><rect x="232" y="52" width="561" height="26" rx="13" fill="#1a66ff"/><rect x="793" y="52" width="5" height="26" fill="rgba(255,255,255,.35)"/><text x="803" y="70" font-family="Microsoft YaHei" font-size="14" font-weight="700" fill="#1b2333">7.6%</text><text x="218" y="116" font-family="Microsoft YaHei" font-size="14" font-weight="600" fill="#3a4560" text-anchor="end">沈阳·正良</text><rect x="232" y="98" width="405" height="26" rx="13" fill="#1a66ff"/><rect x="637" y="98" width="5" height="26" fill="rgba(255,255,255,.35)"/><text x="647" y="116" font-family="Microsoft YaHei" font-size="14" font-weight="700" fill="#1b2333">5.5%</text><text x="218" y="162" font-family="Microsoft YaHei" font-size="14" font-weight="600" fill="#3a4560" text-anchor="end">沈阳·于洪新城</text><rect x="232" y="144" width="332" height="26" rx="13" fill="#1a66ff"/><rect x="564" y="144" width="5" height="26" fill="rgba(255,255,255,.35)"/><text x="574" y="162" font-family="Microsoft YaHei" font-size="14" font-weight="700" fill="#1b2333">4.5%</text><text x="218" y="208" font-family="Microsoft YaHei" font-size="14" font-weight="600" fill="#3a4560" text-anchor="end">大连·瓦房店</text><rect x="232" y="190" width="479" height="26" rx="13" fill="#10a37f"/><rect x="711" y="190" width="5" height="26" fill="rgba(255,255,255,.35)"/><text x="721" y="208" font-family="Microsoft YaHei" font-size="14" font-weight="700" fill="#1b2333">6.5%</text><line x1="527" y1="38" x2="527" y2="230" stroke="#e08a2e" stroke-width="2" stroke-dasharray="6,5"/><g><circle cx="527" cy="26" r="9" fill="#e08a2e"/><text x="527" y="31" font-size="11" fill="#fff" font-weight="700" text-anchor="middle">!</text></g><text x="541" y="30" font-family="Microsoft YaHei" font-size="13" fill="#e08a2e" font-weight="600">推荐线 4.0%</text></svg></div>
+
+  <div class="sec-t"><span class="dot"></span><h2>沈阳 · 候选清单</h2>
+    <span class="cnt">候选 6 席 · 蓝色系</span></div>
+  <div class="grid"><article class="card sy">
+      <div class="accent-bar"></div>
+      <div class="card-head">
+        <span class="emblem" style="background:#1a66ff">沈</span>
+        <div class="t">
+          <div class="plate">道义</div>
+          <div class="comm">荣盛香缇澜山二期</div>
+        </div>
+        <span class="rank" style="color:#1a66ff">No.1</span>
+      </div>
+      <div class="meta">2室1厅 · 60.0㎡ · 高楼层(共18层) · 2014年建</div>
+      <div class="nums">
+        <div class="num"><div class="lab">总价</div><div class="val strong">25.0万</div></div>
+        <div class="num"><div class="lab">估算月租</div><div class="val strong">1583.0元</div></div>
+        <div class="num"><div class="lab">租售比</div><div class="val strong" style="color:#10a37f">7.5984%</div></div>
+        <div class="num"><div class="lab">回本年限</div><div class="val">13年</div></div>
+        <div class="num"><div class="lab">出租易度</div><div class="val">68.4</div></div>
+        <div class="num"><div class="lab">综合分</div><div class="val strong accent">87.4</div></div>
+      </div>
+      <div class="bars">
+        <div class="bar-row"><span class="b-lab">租售比</span>
+          <div class="bar"><div class="fill" style="width:101.312%;background:#10a37f"></div></div>
+          <span class="b-val">7.5984%</span></div>
+        <div class="bar-row"><span class="b-lab">易出租</span>
+          <div class="bar"><div class="fill" style="width:68.4%;background:#1a66ff"></div></div>
+          <span class="b-val">68.4</span></div>
+      </div>
+      <div class="foot">
+        <div class="reason">租金率由2条真实挂牌支撑 · 楼龄12年 · 回本约13年</div>
+        <div class="tags"><span class="tag" style="color:#e08a2e;background:#fdf0df">数据待核实</span><span class="tag" style="color:#0a8a6a;background:#e7f7f0">预算内达标</span></div>
+      </div>
+    </article>
+    <article class="card sy">
+      <div class="accent-bar"></div>
+      <div class="card-head">
+        <span class="emblem" style="background:#1a66ff">沈</span>
+        <div class="t">
+          <div class="plate">正良</div>
+          <div class="comm">华强城一期</div>
+        </div>
+        <span class="rank" style="color:#1a66ff">No.2</span>
+      </div>
+      <div class="meta">1室1厅 · 50.45㎡ · 低楼层(共31层) · 2012年建</div>
+      <div class="nums">
+        <div class="num"><div class="lab">总价</div><div class="val strong">30.0万</div></div>
+        <div class="num"><div class="lab">估算月租</div><div class="val strong">1383.0元</div></div>
+        <div class="num"><div class="lab">租售比</div><div class="val strong" style="color:#10a37f">5.532%</div></div>
+        <div class="num"><div class="lab">回本年限</div><div class="val">18年</div></div>
+        <div class="num"><div class="lab">出租易度</div><div class="val">67.1</div></div>
+        <div class="num"><div class="lab">综合分</div><div class="val strong accent">86.8</div></div>
+      </div>
+      <div class="bars">
+        <div class="bar-row"><span class="b-lab">租售比</span>
+          <div class="bar"><div class="fill" style="width:73.76%;background:#10a37f"></div></div>
+          <span class="b-val">5.532%</span></div>
+        <div class="bar-row"><span class="b-lab">易出租</span>
+          <div class="bar"><div class="fill" style="width:67.1%;background:#1a66ff"></div></div>
+          <span class="b-val">67.1</span></div>
+      </div>
+      <div class="foot">
+        <div class="reason">租金率由1条真实挂牌支撑 · 楼龄14年 · 回本约18年</div>
+        <div class="tags"><span class="tag" style="color:#e08a2e;background:#fdf0df">数据待核实</span><span class="tag" style="color:#0a8a6a;background:#e7f7f0">预算内达标</span></div>
+      </div>
+    </article>
+    </div>
+
+  <div class="sec-t"><span class="dot"></span><h2>大连 · 候选清单</h2>
+    <span class="cnt">候选 6 席 · 青色系</span></div>
+  <div class="grid"></div>
+
+  <div class="sec-t"><span class="dot"></span><h2>全量明细</h2>
+    <span class="cnt">含未达标与风险源</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>城市</th><th>板块</th><th>小区</th><th>总价/万</th><th>月租/元</th>
+    <th>租售比</th><th>回本/年</th><th>净回报</th><th>出租易度</th><th>综合分</th><th>状态</th></tr></thead>
+    <tbody><tr><td>沈阳</td><td>道义</td><td>荣盛香缇澜山二期</td><td class="num">25.0</td><td class="num">1583.0</td><td class="num"><b style="color:#10a37f">7.5984%</b></td><td class="num">13</td><td class="num">7.294464%</td><td class="num">68.4</td><td class="num"><b>87.4</b></td><td><span class="tb-ok">推荐</span></td></tr><tr><td>沈阳</td><td>正良</td><td>华强城一期</td><td class="num">30.0</td><td class="num">1383.0</td><td class="num"><b style="color:#10a37f">5.532%</b></td><td class="num">18</td><td class="num">5.31072%</td><td class="num">67.1</td><td class="num"><b>86.8</b></td><td><span class="tb-ok">推荐</span></td></tr><tr><td>大连</td><td>瓦房店</td><td>桃园小区</td><td class="num">11.7</td><td class="num">636.0</td><td class="num"><b style="color:#10a37f">6.523076923076923%</b></td><td class="num">15</td><td class="num">6.262153846153846%</td><td class="num">53.1</td><td class="num"><b>81.2</b></td><td>—</td></tr><tr><td>沈阳</td><td>于洪新城</td><td>紫郡城一期北院</td><td class="num">8.8</td><td class="num">331.0</td><td class="num"><b style="color:#10a37f">4.513636363636364%</b></td><td class="num">22</td><td class="num">4.333090909090909%</td><td class="num">47.6</td><td class="num"><b>79.0</b></td><td>—</td></tr></tbody>
+  </table></div>
+
+  <div class="sec-t"><span class="dot"></span><h2>数据来源</h2></div>
+  <div class="log"><div class="log">• 链家二手房·沈阳: 取得 5 条 <=30万的真实在售房源</div><div class="log">• 链家租房·沈阳: 解析到 15 个板块的真实挂牌租金率</div><div class="log">• 链家·沈阳: 关联真实板块租金 3/5 条</div><div class="log">• 链家二手房·大连: 取得 2 条 <=30万的真实在售房源</div><div class="log">• 链家租房·大连: 解析到 19 个板块的真实挂牌租金率</div><div class="log">• 链家·大连: 关联真实板块租金 1/2 条</div></div>
+
+  <p class="gamma">说明：租售比 = (月租×12) ÷ 总价，未扣空置税费；净回报已按板块空置率折减。
+     推荐线：总价≤30万、净回报≥3.5%、出租易度≥60、板块非高空置。挂牌价/租金为行情口径，实地购房前请复核。</p>
+</div></body>
+</html>
