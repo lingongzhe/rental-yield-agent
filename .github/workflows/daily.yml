@@ -1,0 +1,44 @@
+name: 每日刷新收租筛选报告
+
+# 机制与 rv-compare 一致：每天定时跑一次，自动生成本地报告并提交回仓库，
+# 形成"每日更新一次"的持续刷新。
+on:
+  schedule:
+    # 北京时间每天 08:00 = UTC 00:00
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}        # 支持手动一键触发
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: 安装依赖（纯标准库，一般无需额外安装）
+        working-directory: runner
+        run: python -m pip install --upgrade pip
+
+      - name: 运行收租筛选智能体，生成可视化报告
+        working-directory: runner
+        run: python main.py --offline
+
+      - name: 提交并推送刷新结果
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add runner/output/rental-report.html
+          if git diff --cached --quiet; then
+            echo "无变更，跳过提交"
+          else
+            git commit -m "docs: 自动刷新收租筛选报告 $(date -u +'%F %H:%M')"
+            git push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          fi

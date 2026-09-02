@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>评分方法详述 · 沈阳/大连 30万内老破小「收租」智能体</title>
+<style>
+  :root{--accent:#1a66ff;--accent2:#10a37f;--warn:#e08a2e;--bad:#d64550;
+        --ink:#1b2333;--muted:#64708c;--rule:#e6eaf3;--bg:#eef1f8;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);
+       background:var(--bg);line-height:1.75;font-size:15px;background-attachment:fixed;
+       background-image:radial-gradient(90rem 54rem at 8% -4%,rgba(26,102,255,.08),transparent 60%),
+                        radial-gradient(80rem 52rem at 100% 10%,rgba(16,163,127,.08),transparent 60%);}
+  .wrap{max-width:980px;margin:0 auto;padding:26px 18px 70px}
+  code{font-family:Consolas,"Courier New",monospace;background:rgba(26,102,255,.08);
+       color:#0b3fb3;padding:1px 6px;border-radius:6px;font-size:.92em}
+  .hero{background:linear-gradient(135deg,#16224f 0%,#1d3a78 48%,#0e8a74 100%);
+        border-radius:22px;padding:38px 34px 30px;color:#fff;
+        box-shadow:0 14px 40px rgba(22,34,79,.28);margin-bottom:26px}
+  .hero h1{font-size:28px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px}
+  .hero .sub{color:rgba(255,255,255,.8);font-size:13.5px}
+  .hero .pipe{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12.5px}
+  .hero .pipe span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+        padding:3px 11px;border-radius:999px}
+  .sec-t{display:flex;align-items:center;gap:10px;margin:36px 0 14px}
+  .sec-t .dot{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  .sec-t h2{font-size:20px;font-weight:800;margin:0}
+  .sec-t .en{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em}
+  p{margin:10px 0}
+  .lead{font-size:16px;color:#37415a}
+  b{color:var(--ink)}
+
+  .card{background:#fff;border:1px solid var(--rule);border-radius:16px;
+        padding:18px 20px;margin:14px 0;box-shadow:0 3px 12px rgba(27,35,51,.05)}
+  .formula{text-align:center;font-family:Consolas,monospace;font-size:17px;color:#0b3fb3;
+        background:#f4f7ff;border:1px solid #dbe5ff;border-radius:12px;padding:14px;
+        margin:12px 0;font-weight:700}
+  .formula small{display:block;color:var(--muted);font-weight:400;font-size:12.5px;margin-top:6px}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0}
+  .kpi{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:14px 16px}
+  .kpi .n{font-size:24px;font-weight:800;
+       background:linear-gradient(135deg,var(--accent),var(--accent2));
+       -webkit-background-clip:text;background-clip:text;color:transparent}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+  h3{font-size:17px;font-weight:800;margin:22px 0 8px}
+  .table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:#fff;margin:12px 0}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
+  th{background:#f2f5fb;text-align:left;padding:9px 12px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--rule)}
+  td{padding:8px 12px;border-bottom:1px solid var(--rule)}
+  tr:last-child td{border-bottom:none}
+  .wbadge{display:inline-block;min-width:46px;text-align:center;font-weight:800;font-size:13px;
+        color:#fff;border-radius:8px;padding:2px 8px}
+  .wval{font-weight:700}
+  .check{color:var(--accent2);font-weight:700}
+
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:16px 0}
+  .flow .node{flex:1;min-width:150px;background:#fff;border:1px solid var(--rule);border-radius:14px;
+        padding:12px 14px;position:relative}
+  .flow .node .step{position:absolute;top:-9px;left:14px;font-size:11px;font-weight:800;color:#fff;
+        background:linear-gradient(135deg,var(--accent),var(--accent2));padding:1px 9px;border-radius:999px}
+  .flow .node .tt{font-weight:700;font-size:14px}
+  .flow .node .ds{font-size:12px;color:var(--muted)}
+
+  .calc{border:1px solid var(--rule);border-radius:16px;background:#fff;overflow:hidden;margin:16px 0}
+  .calc .head{background:linear-gradient(135deg,rgba(26,102,255,.08),rgba(16,163,127,.08));
+        padding:12px 18px;font-weight:800;font-size:15px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  .calc .head .tag{font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:2px 10px;border-radius:999px;align-self:center}
+  .calc .row{display:flex;gap:12px;padding:10px 18px;border-bottom:1px dashed var(--rule);align-items:center;flex-wrap:wrap}
+  .calc .row:last-child{border-bottom:none}
+  .calc .lab{width:150px;flex:0 0 150px;color:var(--muted);font-size:13px}
+  .calc .in{font-family:Consolas,monospace;font-size:13.5px;flex:1;min-width:220px}
+  .calc .out{width:110px;flex:0 0 110px;text-align:right;font-weight:800;font-size:14px;color:var(--accent)}
+  .nb{background:#fbfcfe;border-radius:10px;padding:8px 12px;font-size:13px;color:#3a4560;margin:8px 0}
+  .nb b{color:var(--accent)}
+  .ok{color:#0a8a6a;font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="hero">
+  <h1>评分方法 · 到底是怎么算的</h1>
+  <div class="sub">沈阳 / 大连 30万内老破小「纯投资收租」智能体 &nbsp;·&nbsp; 全部公式与源码一一对应，附一套完整手工演算</div>
+  <div class="pipe">
+    <span>第一步：回报类指标</span>
+    <span>第二步：出租易度评分</span>
+    <span>第三步：合成综合分</span>
+    <span>第四步：达到推荐线</span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="n">租售比</div><div class="l">年租金 ÷ 总价（收不收得回）</div></div>
+  <div class="kpi"><div class="n">出租易度</div><div class="l">0–100 加权分（好不好租）</div></div>
+  <div class="kpi"><div class="n">综合分</div><div class="l">0.6×租售比分 + 0.4×出租易度 − 罚分</div></div>
+  <div class="kpi"><div class="n">推荐线</div><div class="l">净回报≥3.5% 且 易度≥60 且 预算内</div></div>
+</div>
+
+<div class="sec-t"><span class="dot"></span><h2>先看懂整条流水线</h2><span class="en">THE PIPELINE</span></div>
+<p class="lead">评分不追求"算一个魔法数字"，而是分四步走，每一步都能看得见、算得出：</p>
+<div class="flow">
+  <div class="node"><span class="step">STEP 1</span><div class="tt">算出回报</div>
+    <div class="ds">租售比 · 回本年限 · 净回报率</div></div>
+  <div class="node"><span class="step">STEP 2</span><div class="tt">评出租易度</div>
+    <div class="ds">交通/需求/房龄/供需/学区/季节 加权</div></div>
+  <div class="node"><span class="step">STEP 3</span><div class="tt">合成综合分</div>
+    <div class="ds">回报分×0.6 + 易度分×0.4 − 风险罚分</div></div>
+  <div class="node"><span class="step">STEP 4</span><div class="tt">进推荐线</div>
+    <div class="ds">净回报≥3.5%、易度≥60、预算内、非高空置</div></div>
+</div>
+
+<!-- ============ 第一步 ============ -->
+<div class="sec-t"><span class="dot"></span><h2>第一步：三个"回报类"指标</h2><span class="en">STEP 1 · RETURN</span></div>
+<p>一切从 <b>审计中租金</b> 和 <b>总价</b> 出发。租金取"同板块同面积段的中位挂牌月租"算出三个指标：</p>
+
+<div class="card">
+  <h3>① 租售比（年租金回报率）</h3>
+  <div class="formula">租售比(%) = 月租金(中位) × 12 ÷ 总价 × 100%</div>
+  <p>这是回答"<b>收不收得回</b>"的核心数字。按习惯，本智能体用百分比表示，例如 30万房子月租 1200 元 → <code>1200×12 ÷ 300000 = 4.8%</code>。</p>
+
+  <h3>② 回本年限</h3>
+  <div class="formula">回本年限(年) = 总价 ÷ (月租金 × 12)</div>
+  <p>租售比的倒数，纯租金视角，不含房价涨跌。例子：30万 ÷ 14400/年 ≈ <code>21年</code>。</p>
+
+  <h3>③ 净回报率（扣空置后，最保守）</h3>
+  <div class="formula">净回报率(%) = 年租金 × (1 − 板块空置率) ÷ 总价 × 100%</div>
+  <p>真实世界里房子<b>不可能一年租满</b>，必然有空置期和维护。按板块空置风险打折：</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>板块空置风险</th><th>年空置率假设</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td><span class="check">good（低空置）</span></td><td class="wval">3%</td><td>近地铁/商圈/医院，供不应求</td></tr>
+      <tr><td>mid（一般）</td><td class="wval">6%</td><td>配套普通，偶有空置</td></tr>
+      <tr><td><b class="wval">bad（高空置）</b></td><td class="wval">12%</td><td>远郊/无配套，容易租不出去</td></tr>
+    </tbody>
+  </table></div>
+  <div class="nb"><b>初筛参考：</b>净回报率要明显高于无风险收益（银行大额存单约 2.3%–2.6%），本智能体取 <b>净回报≥3.5%</b> 才进推荐。</div>
+</div>
+
+<!-- ============ 第二步 ============ -->
+<div class="sec-t"><span class="dot"></span><h2>第二步：出租易度评分（0–100）</h2><span class="en">STEP 2 · EASE OF RENTING</span></div>
+<p>用来回答"<b>拿房后多久能租出去、会不会长期空置</b>"。由 6 个维度加权合成，权重合计 100：</p>
+
+<div class="card">
+  <h3>权重构成</h3>
+  <table>
+    <thead><tr><th>维度</th><th>权重</th><th>满分说明（各维度先各自得 0–100 分，再乘权重）</th></tr></thead>
+    <tbody>
+      <tr><td>交通便捷</td><td><span class="wbadge" style="background:var(--accent)">25</span></td><td>越近地铁分越高</td></tr>
+      <tr><td>需求与配套</td><td><span class="wbadge" style="background:var(--accent)">25</span></td><td>商圈/医院/高校/就业中心越密越高</td></tr>
+      <tr><td>房龄与硬件</td><td><span class="wbadge" style="background:var(--accent2)">20</span></td><td>楼龄越新、有电梯越高</td></tr>
+      <tr><td>板块供需</td><td><span class="wbadge" style="background:var(--accent2)">15</span></td><td>供应越少越稀缺越高（参考挂牌量）</td></tr>
+      <tr><td>学区</td><td><span class="wbadge" style="background:var(--warn)">10</span></td><td>近中小学吸引力更高</td></tr>
+      <tr><td>季节系数</td><td><span class="wbadge" style="background:var(--warn)">5</span></td><td>9月开学/换租季需求偏旺，给固定参考值 88</td></tr>
+    </tbody>
+  </table>
+  <div class="formula">出租易度分 = (交通×25 + 需求×25 + 房龄×20 + 供需×15 + 学区×10 + 季节×5) ÷ 100</div>
+</div>
+
+<h3>每个维度的评分是怎么查表的</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>交通便捷（按距地铁）</th><th>得分</th><th>需求与配套（按强度0-3）</th><th>得分</th></tr></thead>
+  <tbody>
+    <tr><td>≤500米</td><td class="wval">100</td><td>3（核心商圈/医院/高校俱全）</td><td class="wval">100</td></tr>
+    <tr><td>≤800米</td><td class="wval">85</td><td>2（配套较齐全）</td><td class="wval">80</td></tr>
+    <tr><td>≤1200米</td><td class="wval">70</td><td>1（配套一般）</td><td class="wval">60</td></tr>
+    <tr><td>≤1800米</td><td class="wval">55</td><td>0（基本无配套）</td><td class="wval">35</td></tr>
+    <tr><td>更远</td><td class="wval">40</td><td>—</td><td>—</td></tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>房龄与硬件（按楼龄）</th><th>得分</th><th>板块供需（按挂牌量）</th><th>得分</th></tr></thead>
+  <tbody>
+    <tr><td>楼龄 ≤ 20年</td><td class="wval">95</td><td>≤ 90 套</td><td class="wval">90</td></tr>
+    <tr><td>≤ 26年</td><td class="wval">85</td><td>≤ 120 套</td><td class="wval">80</td></tr>
+    <tr><td>≤ 32年</td><td class="wval">72</td><td>≤ 180 套</td><td class="wval">65</td></tr>
+    <tr><td>≤ 38年</td><td class="wval">60</td><td>≤ 240 套</td><td class="wval">50</td></tr>
+    <tr><td>更老</td><td class="wval">40</td><td>> 240 套</td><td class="wval">38</td></tr>
+    <tr><td colspan="2" style="color:var(--muted)">有电梯再 +5（上限100）</td><td colspan="2" rowspan="1">供应越多越容易内卷空置，分越低</td></tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>学区</th><th>得分</th><th>季节系数</th><th>得分</th></tr></thead>
+  <tbody>
+    <tr><td>近中小学（是学区）</td><td class="wval">100</td><td>9月开学/换租旺季参考值</td><td class="wval">88（固定）</td></tr>
+    <tr><td>非学区</td><td class="wval">60</td><td>—</td><td>—</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ============ 第三步 ============ -->
+<div class="sec-t"><span class="dot"></span><h2>第三步：合成综合分</h2><span class="en">STEP 3 · OVERALL</span></div>
+<p>先把"回报"和"好租"两件事，都换算成 0–100 的分项，再加权 + 罚分。</p>
+
+<div class="card">
+  <h3>先把租售比归一化成"租售比分"</h3>
+  <div class="formula">租售比分 = clamp( (实际租售比 − 2.5%) ÷ (4.0% − 2.5%) × 100 , 0 , 100 )</div>
+  <div class="nb"><b>为什么是 4.0% 和 2.5%？</b>4.0% 是"目标线"（达到即满分，30万内老破小的现实上限）；2.5% 是"中间线"（接近无风险收益）。租售比越高，这个分越接近 100。</div>
+
+  <h3>风险罚分</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>风险因素</th><th>罚分</th></tr></thead>
+    <tbody>
+      <tr><td>板块处于"高空置风险"(bad)</td><td class="wval" style="color:var(--bad)">−15</td></tr>
+      <tr><td>板块空置一般(mid)</td><td class="wval">−5</td></tr>
+      <tr><td>楼龄 > 40年</td><td class="wval" style="color:var(--warn)">−10</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>最终综合分</h3>
+  <div class="formula">综合分 = 0.6 × 租售比分 + 0.4 × 出租易度分 − 罚分</div>
+  <p>这样设计是因为本智能体定位<b>纯投资收租</b>：<b>能不能收租（租售比）权重 0.6</b>，比"好不好租（易出租）"的 0.4 更重。罚分则是"一票警示"：远郊高空置现成的便宜，也不能让它误入选。</p>
+</div>
+
+<!-- ============ 第四步 ============ -->
+<div class="sec-t"><span class="dot"></span><h2>第四步：达到推荐线才入选</h2><span class="en">STEP 4 · GATE</span></div>
+<div class="table-wrap"><table>
+  <thead><tr><th>条件</th><th>阈值</th><th>含义</th></tr></thead>
+  <tbody>
+    <tr><td>总价</td><td class="wval">≤ 30万</td><td>用户预算硬性红线</td></tr>
+    <tr><td>净回报率</td><td class="wval">≥ 3.5%</td><td>明显高于无风险收益，扣空置后仍有余量</td></tr>
+    <tr><td>出租易度</td><td class="wval">≥ 60</td><td>不能租不出去</td></tr>
+    <tr><td>板块风险</td><td class="wval">非 bad</td><td>远郊高空置板块不入推荐</td></tr>
+  </tbody>
+</table></div>
+<p>只有四条件全满足才进"推荐清单"，否则列入明细表并标注未达线原因。</p>
+
+<!-- ============ 实例演算 ============ -->
+<div class="sec-t"><span class="dot"></span><h2>实例：拿"前进小区"完整算一遍</h2><span class="en">WORKED EXAMPLE</span></div>
+<p class="lead">用真实样本 <b>沈阳 · 皇姑-长江街 · 前进小区</b>（总价 20万，38㎡，2000年建，中层无电梯，月租中位 900元）从头算到尾：</p>
+
+<div class="calc">
+  <div class="head">① 回报类指标 <span class="tag">比赛开始</span></div>
+  <div class="row"><div class="lab">租售比</div>
+    <div class="in">900 × 12 ÷ 200000 = 5.4%</div>
+    <div class="out">5.4% ✓高于4%</div></div>
+  <div class="row"><div class="lab">回本年限</div>
+    <div class="in">200000 ÷ (900×12) = 18.5年</div>
+    <div class="out">18.5年</div></div>
+  <div class="row"><div class="lab">净回报率</div>
+    <div class="in">板块good → 空置率3% → 10800×(1−0.03) ÷ 200000</div>
+    <div class="out">5.24% ≥3.5 ✓</div></div>
+</div>
+
+<div class="calc">
+  <div class="head">② 出租易度评分 <span class="tag">6 维加权</span></div>
+  <div class="row"><div class="lab">交通（距地铁450m）</div><div class="in">≤500 → 100分 × 权重25</div><div class="out">2500</div></div>
+  <div class="row"><div class="lab">需求（强度3）</div><div class="in">100分 × 25</div><div class="out">2500</div></div>
+  <div class="row"><div class="lab">房龄（2026−2000=26年）</div><div class="in">26年 → 85分；无电梯+0 → ×20</div><div class="out">1700</div></div>
+  <div class="row"><div class="lab">供需（挂牌88套）</div><div class="in">88≤90 → 90分 × 15</div><div class="out">1350</div></div>
+  <div class="row"><div class="lab">学区（近学校）</div><div class="in">100分 × 10</div><div class="out">1000</div></div>
+  <div class="row"><div class="lab">季节（9月参考）</div><div class="in">88分 × 5</div><div class="out">440</div></div>
+  <div class="row" style="background:#f4f7ff"><div class="lab">易度 = 合计 ÷ 100</div>
+    <div class="in">(2500+2500+1700+1350+1000+440) ÷ 100</div>
+    <div class="out">94.9 ≥60 ✓</div></div>
+</div>
+
+<div class="calc">
+  <div class="head">③ 综合分 <span class="tag">阶段汇总</span></div>
+  <div class="row"><div class="lab">租售比分</div>
+    <div class="in">(5.4 − 2.5) ÷ (4.0 − 2.5) × 100 = 193 → 封顶</div>
+    <div class="out">100</div></div>
+  <div class="row"><div class="lab">风险罚分</div>
+    <div class="in">板块good(+0) + 楼龄26(<40,+0)</div>
+    <div class="out">0</div></div>
+  <div class="row" style="background:#f4f7ff"><div class="lab">综合分</div>
+    <div class="in">0.6×100 + 0.4×94.9 − 0</div>
+    <div class="out ok">97.9 ≈ 98</div></div>
+  <div class="row"><div class="lab">是否推荐</div>
+    <div class="in">≤30万 ✓ · 净回报5.2%≥3.5 ✓ · 易度≥60 ✓ · 板块非bad ✓</div>
+    <div class="out ok">✅ 推荐</div></div>
+</div>
+
+<div class="nb"><b>对照别家：</b>若这套房换到"于洪远郊段"（无地铁、需求0、挂牌260套、风险bad、楼龄更老）——交通40、需求35、供需38、房龄40、罚分15+10，立刻掉出推荐。比分不是玄学：<b>高分=既能收租又很好租</b></div>
+
+<div class="sec-t"><span class="dot"></span><h2>想改规则？对号入座改 <code>config.py</code></h2><span class="en">TUNING</span></div>
+<div class="table-wrap"><table>
+  <thead><tr><th>你想调成什么样</th><th>改哪一行</th><th>默认</th></tr></thead>
+  <tbody>
+    <tr><td>总价上限提到更高/压更低</td><td><code>BUDGET_WAN</code></td><td>30</td></tr>
+    <tr><td>更看收租 vs 更好租出租</td><td><code>W_YIELD</code>（配 <code>W_EASE</code> 用）</td><td>0.6 / 0.4</td></tr>
+    <tr><td>放宽"达标"门槛</td><td><code>NET_YIELD_FLOOR</code>、<code>RENT_EASE_FLOOR</code></td><td>3.5 / 60</td></tr>
+    <tr><td>租售比满分线</td><td><code>YIELD_TARGET</code>（中间线 <code>YIELD_MID</code>）</td><td>4.0 / 2.5</td></tr>
+    <tr><td>出租易度各维度权重</td><td><code>WEIGHTS</code>（交通/需求/房龄/供需/学区/季节）</td><td>25/25/20/15/10/5</td></tr>
+    <tr><td>空置折减</td><td><code>VACANCY_MAP</code></td><td>3/6/12%</td></tr>
+  </tbody>
+</table></div>
+
+<p style="color:var(--muted);font-size:12.5px;margin-top:24px">评分源码：<code>score.py</code>（纯计算，无 IO，可直接单测复算）。本页所有公式均可与该文件逐行对照，示例演算结果与程序输出一致（综合分 97.9）。</p>
+
+</div></body>
+</html>
