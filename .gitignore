@@ -7,3 +7,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# 本地运行产物
+runner/output/daily.log
