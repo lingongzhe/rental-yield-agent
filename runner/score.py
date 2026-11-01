@@ -109,7 +109,10 @@ def _build_reason(h, ease, payback):
     parts = []
     basis = h.get("rent_basis") or {}
     if basis.get("rate"):
-        parts.append("租金率由{}条真实挂牌支撑".format(basis["samples"]))
+        if basis.get("samples"):
+            parts.append("租金率由{}条真实挂牌支撑".format(basis["samples"]))
+        else:
+            parts.append("租金率取贝壳小区挂牌均价")
     if h.get("building_year"):
         parts.append("楼龄{}年".format(CUR_YEAR - h["building_year"]))
     parts.append("回本约%g年" % round(payback))

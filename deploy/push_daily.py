@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""本机每日任务：采集链家真实数据 → 生成报告 → 自动推送到 GitHub Pages。
+"""本机每日任务：贝壳官方 API 更新数据 → 生成报告 → 自动推送到 GitHub Pages。
 
 逻辑：
-  1) 在本机(国内网络)运行 main.py，抓到链家真实数据并生成报告。
+  1) 在本机运行 `main.py --refresh`，经贝壳官方开放平台(beike CLI + 本机 Key)
+     更新真实挂牌数据并生成报告。
   2) 若生成了真实报告（非"未获取到真实数据"提示页），复制到 docs/index.html。
   3) git 提交并 push 到远程仓库，触发 GitHub Actions / Pages 自动更新。
-  4) 若本次仍是提示页（例如链家临时反爬），则不上推，避免覆盖线上真实数据。
+  4) 若本次仍是提示页（例如贝壳 API 不可用/被限流），则不上推，避免覆盖线上真实数据。
 
 由 push_daily.bat 或 Windows 计划任务调用。
 """
@@ -40,9 +41,9 @@ def run(cmd, cwd=None):
 def main():
     log("==== 每日真实数据推送开始 ====")
 
-    # 1) 本机抓真实数据并生成报告
+    # 1) 本机经贝壳官方 API 更新真实数据并生成报告
     py = sys.executable
-    r = run([py, "main.py"], cwd=RUNNER)
+    r = run([py, "main.py", "--refresh"], cwd=RUNNER)
     log("main.py 退出码 = %s" % r.returncode)
     if r.stdout:
         log("STDOUT: " + r.stdout.strip()[:800])

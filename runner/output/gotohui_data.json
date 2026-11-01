@@ -1,0 +1,14 @@
+{
+  "cities": {
+    "沈阳": {
+      "second_price": 8040.0,
+      "new_price": 12254.0,
+      "city": "沈阳"
+    },
+    "大连": {
+      "second_price": 10870.0,
+      "new_price": 14590.0,
+      "city": "大连"
+    }
+  }
+}

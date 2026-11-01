@@ -2,8 +2,8 @@
 chcp 65001>nul
 rem ============================================================
 rem  本机每日真实数据 → 生成报告 → 自动推送到 GitHub Pages
-rem  前置：本机能联网访问链家(国内网络)，且有 GitHub Token 在
-rem        ..\rv-crawler\deploy\.gh_token 或已保存凭据。
+rem  数据源：贝壳官方 API(--refresh)，Key 仅存本机
+rem  前置：已安装 beike CLI 且有 git 凭据/Token。
 rem ============================================================
 setlocal
 cd /d "%~dp0"
@@ -12,8 +12,8 @@ set "PY=%~dp0..\venv\Scripts\python.exe"
 if not exist "%PY%" set "PY=python"
 set "RUNNER=%~dp0..\runner"
 
-echo [%date% %time%] 开始：采集真实数据并生成报告 ...
-"%PY%" "%RUNNER%\main.py"
+echo [%date% %time%] 开始：贝壳官方数据更新并生成报告 ...
+"%PY%" "%RUNNER%\main.py" --refresh
 set RC=%ERRORLEVEL%
 if not "%RC%"=="0" (
   echo [运行失败] main.py 退出码=%RC%，但仍尝试推送已有报告。

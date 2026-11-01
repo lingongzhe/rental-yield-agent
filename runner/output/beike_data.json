@@ -1,0 +1,571 @@
+{
+ "source": "beike-api 官方贝壳开放平台",
+ "fetched_at": "2026-09-03 09:50",
+ "cities": [
+  "沈阳",
+  "大连"
+ ],
+ "budget": 30.0,
+ "houses": [
+  {
+   "city": "沈阳",
+   "plate": "道义",
+   "community": "明发锦绣华城",
+   "district": "",
+   "price_wan": 21.0,
+   "area": 43.0,
+   "building_year": 2011,
+   "rooms": "1室1厅1厨1卫",
+   "room_count": 1,
+   "floor": "高楼层",
+   "orientation": "东南",
+   "tags": "主卧朝南/朝向好/不带车位/适合刚需/老破小/无抵押/有单元门禁/高梯户比/临近地铁/楼层好/采光好/有钥匙/无学位",
+   "listing_time": "2021-01-25 09:01:58",
+   "metro_m": 1320,
+   "comm_name": "明发锦绣华城",
+   "comm_rent_rate": 16.3,
+   "repos_yield_pct": 4.76,
+   "rent": [
+    701,
+    701,
+    701
+   ],
+   "rent_basis": {
+    "rate": 16.3,
+    "samples": 0,
+    "source": "贝壳·小区租房均价(明发锦绣华城)"
+   }
+  },
+  {
+   "city": "沈阳",
+   "plate": "经济技术开发区",
+   "community": "万熹绿景西区",
+   "district": "",
+   "price_wan": 21.0,
+   "area": 69.0,
+   "building_year": 2012,
+   "rooms": "2室1厅1厨1卫",
+   "room_count": 2,
+   "floor": "高楼层",
+   "orientation": "南,北",
+   "tags": "主卧朝南/朝向好/不带车位/高性价比/适合刚需/远大新/无抵押/有单元门禁/采光好/热门房源/有钥匙/无学位",
+   "listing_time": "2021-03-18 17:03:57",
+   "metro_m": 1923,
+   "comm_name": "万熹绿景西区",
+   "comm_rent_rate": 14.36,
+   "repos_yield_pct": 6.83,
+   "rent": [
+    991,
+    991,
+    991
+   ],
+   "rent_basis": {
+    "rate": 14.36,
+    "samples": 0,
+    "source": "贝壳·小区租房均价(万熹绿景西区)"
+   }
+  },
+  {
+   "city": "沈阳",
+   "plate": "于洪新城",
+   "community": "宏发华城世界橙郡",
+   "district": "",
+   "price_wan": 21.0,
+   "area": 34.0,
+   "building_year": 2008,
+   "rooms": "1室1厅1厨1卫",
+   "room_count": 1,
+   "floor": "低楼层",
+   "orientation": "北",
+   "tags": "不带车位/适合刚需/老破小/无抵押/有单元门禁/低容积率/有钥匙/无学位",
+   "listing_time": "2021-04-17 14:04:59",
+   "metro_m": 1893,
+   "comm_name": "宏发华城世界橙郡",
+   "comm_rent_rate": 18.1,
+   "repos_yield_pct": 3.7,
+   "rent": [
+    615,
+    615,
+    615
+   ],
+   "rent_basis": {
+    "rate": 18.1,
+    "samples": 0,
+    "source": "贝壳·小区租房均价(宏发华城世界橙郡)"
+   }
+  },
+  {
+   "city": "沈阳",
+   "plate": "道义",
+   "community": "宏颐泷园",
+   "district": "",
+   "price_wan": 21.0,
+   "area": 85.0,
+   "building_year": 2008,
+   "rooms": "2室2厅1厨1卫",
+   "room_count": 2,
+   "floor": "高楼层",
+   "orientation": "南,北",
+   "tags": "主卧朝南/朝向好/不带车位/高性价比/适合刚需/远大新/无抵押/有单元门禁/临近地铁/采光好/热门房源/有钥匙/有学位",
+   "listing_time": "2021-05-02 16:05:46",
+   "metro_m": 1097,
+   "comm_name": "宏颐泷园",
+   "comm_rent_rate": 14.54,
+   "repos_yield_pct": 5.54,
+   "rent": [
+    1236,
+    1236,
+    1236
+   ],
+   "rent_basis": {
+    "rate": 14.54,
+    "samples": 0,
+    "source": "贝壳·小区租房均价(宏颐泷园)"
+   }
+  },
+  {
+   "city": "沈阳",
+   "plate": "二台子",
+   "community": "巧克力城",
+   "district": "",
+   "price_wan": 21.0,
+   "area": 47.0,
+   "building_year": 2016,
+   "rooms": "1室1厅1厨1卫",
+   "room_count": 1,
+   "floor": "低楼层",
+   "orientation": "南",
+   "tags": "主卧朝南/朝向好/适合刚需/远大新/有抵押/有单元门禁/高梯户比/热门房源/无钥匙/无学位",
+   "listing_time": "2021-05-06 12:05:09",
+   "metro_m": 1868,
+   "comm_name": "巧克力城",
+   "comm_rent_rate": 18.54,
+   "repos_yield_pct": 4.45,
+   "rent": [
+    871,
+    871,
+    871
+   ],
+   "rent_basis": {
+    "rate": 18.54,
+    "samples": 0,
+    "source": "贝壳·小区租房均价(巧克力城)"
+   }
+  }
+ ],
+ "plate_rents": {
+  "沈阳": {
+   "北行": {
+    "rate": 22.22,
+    "samples": 6
+   },
+   "兴工街": {
+    "rate": 25.0,
+    "samples": 2
+   },
+   "道义": {
+    "rate": 18.18,
+    "samples": 2
+   },
+   "新市府": {
+    "rate": 13.01,
+    "samples": 2
+   },
+   "陵西": {
+    "rate": 18.18,
+    "samples": 4
+   },
+   "万柳塘": {
+    "rate": 21.0,
+    "samples": 2
+   },
+   "工人村": {
+    "rate": 16.41,
+    "samples": 1
+   },
+   "会展中心": {
+    "rate": 19.64,
+    "samples": 10
+   },
+   "四台子": {
+    "rate": 20.12,
+    "samples": 3
+   },
+   "新南站": {
+    "rate": 27.59,
+    "samples": 2
+   },
+   "西三台子": {
+    "rate": 17.81,
+    "samples": 6
+   },
+   "正良": {
+    "rate": 17.98,
+    "samples": 1
+   },
+   "中山路": {
+    "rate": 31.37,
+    "samples": 1
+   },
+   "长白": {
+    "rate": 17.78,
+    "samples": 3
+   },
+   "新立堡": {
+    "rate": 22.54,
+    "samples": 1
+   },
+   "铁西广场": {
+    "rate": 18.57,
+    "samples": 2
+   },
+   "太原街": {
+    "rate": 28.0,
+    "samples": 2
+   },
+   "奥体": {
+    "rate": 23.6,
+    "samples": 1
+   },
+   "于洪新城": {
+    "rate": 17.65,
+    "samples": 1
+   },
+   "陵东": {
+    "rate": 14.79,
+    "samples": 1
+   },
+   "市府": {
+    "rate": 38.89,
+    "samples": 1
+   },
+   "方家栏": {
+    "rate": 13.64,
+    "samples": 1
+   },
+   "新华广场": {
+    "rate": 21.25,
+    "samples": 2
+   },
+   "和平广场": {
+    "rate": 14.17,
+    "samples": 1
+   },
+   "西塔": {
+    "rate": 52.38,
+    "samples": 1
+   },
+   "砂山": {
+    "rate": 15.31,
+    "samples": 1
+   },
+   "南湖": {
+    "rate": 23.33,
+    "samples": 2
+   },
+   "马路湾": {
+    "rate": 42.86,
+    "samples": 1
+   },
+   "金廊": {
+    "rate": 20.93,
+    "samples": 3
+   },
+   "东五里河": {
+    "rate": 23.33,
+    "samples": 3
+   },
+   "金融中心": {
+    "rate": 35.71,
+    "samples": 1
+   },
+   "南塔": {
+    "rate": 33.33,
+    "samples": 1
+   },
+   "泉园": {
+    "rate": 11.67,
+    "samples": 1
+   },
+   "东北大马路": {
+    "rate": 21.52,
+    "samples": 4
+   },
+   "东中街": {
+    "rate": 34.91,
+    "samples": 3
+   },
+   "二台子": {
+    "rate": 14.71,
+    "samples": 1
+   },
+   "八王寺": {
+    "rate": 25.89,
+    "samples": 2
+   },
+   "三台子": {
+    "rate": 16.9,
+    "samples": 2
+   },
+   "北陵": {
+    "rate": 29.55,
+    "samples": 1
+   },
+   "塔湾": {
+    "rate": 18.75,
+    "samples": 1
+   },
+   "保工南": {
+    "rate": 25.0,
+    "samples": 3
+   },
+   "西站": {
+    "rate": 13.04,
+    "samples": 1
+   },
+   "启工街": {
+    "rate": 53.4,
+    "samples": 1
+   },
+   "经济技术开发区": {
+    "rate": 25.32,
+    "samples": 1
+   },
+   "保工北": {
+    "rate": 25.23,
+    "samples": 1
+   },
+   "北一路": {
+    "rate": 22.92,
+    "samples": 1
+   },
+   "佟沟新城": {
+    "rate": 13.08,
+    "samples": 1
+   },
+   "丁香湖": {
+    "rate": 8.77,
+    "samples": 1
+   },
+   "造化": {
+    "rate": 24.14,
+    "samples": 1
+   },
+   "于洪广场": {
+    "rate": 12.0,
+    "samples": 1
+   },
+   "荷兰村": {
+    "rate": 18.35,
+    "samples": 1
+   },
+   "沙岭": {
+    "rate": 15.0,
+    "samples": 1
+   }
+  },
+  "大连": {
+   "华乐": {
+    "rate": 38.1,
+    "samples": 1
+   },
+   "南山": {
+    "rate": 36.07,
+    "samples": 1
+   },
+   "三八北": {
+    "rate": 42.86,
+    "samples": 2
+   },
+   "中山友好": {
+    "rate": 38.89,
+    "samples": 1
+   },
+   "东港": {
+    "rate": 58.25,
+    "samples": 1
+   },
+   "八一路": {
+    "rate": 28.57,
+    "samples": 4
+   },
+   "三八南": {
+    "rate": 27.78,
+    "samples": 1
+   },
+   "秀月": {
+    "rate": 37.14,
+    "samples": 1
+   },
+   "景山": {
+    "rate": 20.63,
+    "samples": 1
+   },
+   "华府": {
+    "rate": 66.18,
+    "samples": 1
+   },
+   "北京公园": {
+    "rate": 31.17,
+    "samples": 3
+   },
+   "英华街": {
+    "rate": 21.54,
+    "samples": 1
+   },
+   "莲花白云": {
+    "rate": 34.48,
+    "samples": 1
+   },
+   "香炉礁": {
+    "rate": 33.33,
+    "samples": 1
+   },
+   "孙家沟": {
+    "rate": 35.23,
+    "samples": 2
+   },
+   "星海人家商圈": {
+    "rate": 48.94,
+    "samples": 2
+   },
+   "春柳": {
+    "rate": 21.79,
+    "samples": 2
+   },
+   "幸福e家": {
+    "rate": 36.76,
+    "samples": 1
+   },
+   "马栏": {
+    "rate": 21.57,
+    "samples": 2
+   },
+   "太原街": {
+    "rate": 32.11,
+    "samples": 1
+   },
+   "周水子": {
+    "rate": 38.1,
+    "samples": 1
+   },
+   "华南": {
+    "rate": 52.17,
+    "samples": 1
+   },
+   "泉水美域盛景": {
+    "rate": 23.58,
+    "samples": 1
+   },
+   "促进路": {
+    "rate": 19.61,
+    "samples": 1
+   },
+   "泉水龙畔金泉": {
+    "rate": 16.67,
+    "samples": 1
+   },
+   "名贵": {
+    "rate": 60.0,
+    "samples": 1
+   },
+   "山东路": {
+    "rate": 24.32,
+    "samples": 3
+   },
+   "泡崖市场": {
+    "rate": 26.53,
+    "samples": 1
+   },
+   "金石滩": {
+    "rate": 26.09,
+    "samples": 5
+   },
+   "光明": {
+    "rate": 14.29,
+    "samples": 3
+   },
+   "古城汇金": {
+    "rate": 12.94,
+    "samples": 1
+   },
+   "站前": {
+    "rate": 11.43,
+    "samples": 1
+   },
+   "旅顺口": {
+    "rate": 29.51,
+    "samples": 10
+   }
+  }
+ },
+ "log": [
+  "贝壳·沈阳 查询『总价20万以内 二手房』→ 新收录 10 个ID(累计 10)",
+  "贝壳·沈阳 查询『总价25万以内 二手房』→ 新收录 10 个ID(累计 20)",
+  "贝壳·沈阳 查询『总价30万以内 二手房』→ 新收录 10 个ID(累计 30)",
+  "贝壳·沈阳 查询『和平 30万以内 二手房』→ 新收录 10 个ID(累计 40)",
+  "贝壳·沈阳 查询『沈河 30万以内 二手房』→ 新收录 10 个ID(累计 50)",
+  "贝壳·沈阳 查询『大东 30万以内 二手房』→ 新收录 10 个ID(累计 60)",
+  "贝壳·沈阳 查询『皇姑 30万以内 二手房』→ 新收录 9 个ID(累计 69)",
+  "贝壳·沈阳 查询『铁西 30万以内 二手房』→ 新收录 6 个ID(累计 75)",
+  "贝壳·沈阳 查询『苏家屯 30万以内 二手房』→ 新收录 10 个ID(累计 85)",
+  "贝壳·沈阳 查询『于洪 30万以内 二手房』→ 新收录 6 个ID(累计 91)",
+  "贝壳·沈阳 查询『沈北 30万以内 二手房』→ 新收录 10 个ID(累计 101)",
+  "贝壳·沈阳: 检索去重后 101 个在售房源ID",
+  "贝壳·沈阳 详情 102104425105 失败：service temporarily unavailable",
+  "贝壳·沈阳 详情 102104575468 失败：service temporarily unavailable",
+  "贝壳·沈阳 详情 102104724871 失败：service temporarily unavailable",
+  "贝壳·沈阳 详情 102104880961 失败：service temporarily unavailable",
+  "贝壳·沈阳 详情 102106596359 失败：service temporarily unavailable",
+  "贝壳·沈阳 详情 102101111606 失败：service temporarily unavailable",
+  "贝壳·沈阳: 详情连续失败 6 次(疑似限流)，停止本轮尝试",
+  "贝壳·沈阳: 拿到 5 套真实挂牌 <=30.0万",
+  "贝壳·沈阳 租房『1000元以内 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『1500元以内 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『2000元以内 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『和平 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『沈河 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『大东 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『皇姑 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『铁西 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『苏家屯 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『于洪 整租』→ 10 条在租挂牌",
+  "贝壳·沈阳 租房『沈北 整租』失败：service temporarily unavailable",
+  "贝壳·沈阳: 聚合到 52 个板块的中位挂牌租金率",
+  "贝壳·沈阳: 关联真实租金 5/5 套",
+  "贝壳·大连 查询『总价20万以内 二手房』失败：service temporarily unavailable",
+  "贝壳·大连 查询『总价25万以内 二手房』失败：service temporarily unavailable",
+  "贝壳·大连 查询『总价30万以内 二手房』失败：service temporarily unavailable",
+  "贝壳·大连 查询『中山 30万以内 二手房』失败：service temporarily unavailable",
+  "贝壳·大连 查询『西岗 30万以内 二手房』→ 新收录 10 个ID(累计 10)",
+  "贝壳·大连 查询『沙河口 30万以内 二手房』→ 新收录 10 个ID(累计 20)",
+  "贝壳·大连 查询『甘井子 30万以内 二手房』→ 新收录 10 个ID(累计 30)",
+  "贝壳·大连 查询『金州 30万以内 二手房』→ 新收录 10 个ID(累计 40)",
+  "贝壳·大连 查询『旅顺口 30万以内 二手房』→ 新收录 10 个ID(累计 50)",
+  "贝壳·大连: 检索去重后 50 个在售房源ID",
+  "贝壳·大连 详情 102111236140 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102111270705 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102111293598 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102111413345 失败：service temporarily unavailable",
+  "贝壳·大连: 详情进度 15/50",
+  "贝壳·大连 详情 102111374727 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102110673298 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102110762818 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102110979737 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102111001115 失败：service temporarily unavailable",
+  "贝壳·大连 详情 102111077047 失败：service temporarily unavailable",
+  "贝壳·大连: 详情连续失败 6 次(疑似限流)，停止本轮尝试",
+  "贝壳·大连: 拿到 0 套真实挂牌 <=30.0万",
+  "贝壳·大连 租房『1000元以内 整租』失败：service temporarily unavailable",
+  "贝壳·大连 租房『1500元以内 整租』失败：service temporarily unavailable",
+  "贝壳·大连 租房『2000元以内 整租』失败：service temporarily unavailable",
+  "贝壳·大连 租房『中山 整租』→ 10 条在租挂牌",
+  "贝壳·大连 租房『西岗 整租』→ 10 条在租挂牌",
+  "贝壳·大连 租房『沙河口 整租』→ 10 条在租挂牌",
+  "贝壳·大连 租房『甘井子 整租』→ 10 条在租挂牌",
+  "贝壳·大连 租房『金州 整租』→ 10 条在租挂牌",
+  "贝壳·大连 租房『旅顺口 整租』→ 10 条在租挂牌",
+  "贝壳·大连: 聚合到 33 个板块的中位挂牌租金率",
+  "贝壳·大连: 关联真实租金 0/0 套"
+ ]
+}

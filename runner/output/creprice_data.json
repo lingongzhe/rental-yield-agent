@@ -1,0 +1,94 @@
+{
+  "month": "2026-10",
+  "creprice": {
+    "沈阳": {
+      "和平区": {
+        "price_rate": 11204.0,
+        "rent_rate": 29.68,
+        "month": "2026-10"
+      },
+      "浑南区": {
+        "price_rate": 9267.0,
+        "rent_rate": 25.28,
+        "month": "2026-10"
+      },
+      "皇姑区": {
+        "price_rate": 8825.0,
+        "rent_rate": 23.86,
+        "month": "2026-10"
+      },
+      "沈河区": {
+        "price_rate": 8181.0,
+        "rent_rate": 28.53,
+        "month": "2026-10"
+      },
+      "铁西区": {
+        "price_rate": 7778.0,
+        "rent_rate": 24.4,
+        "month": "2026-10"
+      },
+      "大东区": {
+        "price_rate": 7371.0,
+        "rent_rate": 24.34,
+        "month": "2026-10"
+      },
+      "于洪区": {
+        "price_rate": 7248.0,
+        "rent_rate": 20.7,
+        "month": "2026-10"
+      },
+      "沈北新区": {
+        "price_rate": 6826.0,
+        "rent_rate": 20.51,
+        "month": "2026-10"
+      },
+      "苏家屯区": {
+        "price_rate": 5809.0,
+        "rent_rate": 18.78,
+        "month": "2026-10"
+      }
+    },
+    "大连": {
+      "中山区": {
+        "price_rate": 19683.0,
+        "rent_rate": 37.85,
+        "month": "2026-10"
+      },
+      "沙河口区": {
+        "price_rate": 14139.0,
+        "rent_rate": 34.22,
+        "month": "2026-10"
+      },
+      "甘井子区": {
+        "price_rate": 12941.0,
+        "rent_rate": 29.18,
+        "month": "2026-10"
+      },
+      "西岗区": {
+        "price_rate": 12835.0,
+        "rent_rate": 34.73,
+        "month": "2026-10"
+      },
+      "开发区": {
+        "price_rate": 9536.0,
+        "rent_rate": 25.31,
+        "month": "2026-10"
+      },
+      "金州区": {
+        "price_rate": 7164.0,
+        "rent_rate": 21.44,
+        "month": "2026-10"
+      },
+      "旅顺口区": {
+        "price_rate": 6441.0,
+        "rent_rate": 18.9,
+        "month": "2026-10"
+      },
+      "普兰店区": {
+        "price_rate": 5578.0,
+        "rent_rate": 16.36,
+        "month": "2026-10"
+      }
+    }
+  }
+}

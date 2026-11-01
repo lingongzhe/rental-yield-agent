@@ -76,6 +76,7 @@ def house_card(r, idx):
     yw = max(3, r["rent_yield"] / 7.5 * 100)
     ew = max(3, r["ease_score"])
     rank_txt = ("No.%d" % idx) if r["recommend"] else "备选"
+    year_txt = ("%s" % r["building_year"]) if r.get("building_year") else "—"
     budget_color = "#0a8a6a" if not r["over_budget"] else C_BAD
     budget_bg = "#e7f7f0" if not r["over_budget"] else "#fbeaea"
     budget_txt = "预算内达标" if not r["over_budget"] else "超预算(已排除)"
@@ -90,7 +91,7 @@ def house_card(r, idx):
         </div>
         <span class="rank" style="color:{city_color}">{rank_txt}</span>
       </div>
-      <div class="meta">{rooms} · {area}㎡ · {floor} · {year}年建</div>
+      <div class="meta">{rooms} · {area}㎡ · {floor} · {year_txt}年建</div>
       <div class="nums">
         <div class="num"><div class="lab">总价</div><div class="val strong">{price}万</div></div>
         <div class="num"><div class="lab">估算月租</div><div class="val strong">{rent}元</div></div>
@@ -115,7 +116,7 @@ def house_card(r, idx):
     """.format(
         cls=cls, city_color=city_color, city_emblem=city_emblem, rank_txt=rank_txt,
         plate=r["plate"], community=r["community"], rooms=r["rooms"], area=r["area"],
-        floor=r["floor"], year=r["building_year"], price=r["price_wan"], rent=r["rent_mid"],
+        floor=r["floor"], year_txt=year_txt, price=r["price_wan"], rent=r["rent_mid"],
         yld=r["rent_yield"], payback=round(r["payback_years"]), ease=r["ease_score"],
         overall=r["overall"], reason=r["reason"], tags=tag_html if tag_html else "—",
         budget_color=budget_color, budget_bg=budget_bg, budget_txt=budget_txt,
@@ -123,8 +124,82 @@ def house_card(r, idx):
     ).lstrip()
 
 
-def build_html(msg, recs, coll_log, online):
-    """组合最终 HTML 报告。recs: 全量排序记录。"""
+def market_panel(crep, crep_month=""):
+    """creprice.cn 区县市场行情面板：两城 区 → 房价(元/㎡) + 租金(元/月/㎡) + 售租比(年)。"""
+    if not crep:
+        return ""
+    rows = []
+    order = ["沈阳", "大连"]
+    for city in order:
+        dists = crep.get(city) or {}
+        rows.append('<div class="mk-col"><h4>{city}</h4><table class="mk">'
+                    '<tr><th>区县</th><th>房价<br>元/㎡</th><th>租金<br>元/月/㎡</th>'
+                    '<th>售租比<br>年</th></tr>'.format(city=city))
+        for name in sorted(dists, key=lambda n: -(dists[n]["rent_rate"] or 0)):
+            it = dists[name] or {}
+            pr, rr = it.get("price_rate"), it.get("rent_rate")
+            pyr = (pr / (rr * 12.0)) if (pr and rr) else None
+            pyr_txt = ("%.1f" % pyr) if pyr else "—"
+            rows.append(
+                "<tr><td>{n}</td><td>{p}</td><td>{r}</td><td>{y}</td></tr>".format(
+                    n=name,
+                    p=("--" if pr is None else "{:,.0f}".format(pr)),
+                    r=("--" if rr is None else "{:.2f}".format(rr)),
+                    y=pyr_txt))
+        rows.append("</table></div>")
+    return (
+        '<div class="sec-t"><span class="dot"></span>'
+        '<h2>区县市场行情</h2>'
+        '<span class="cnt">creprice.cn 中国房价行情 · {m}</span></div>'
+        '<div class="panel mk-grid">' + "".join(rows) +
+        '<div class="mk-note">售租比 = 房价(元/㎡) ÷ [租金(元/月/㎡)×12]，单位为"年"，越小回本越快，'
+        '用于独立校验候选房源所在区的租售水平。来源：全国房价行情平台公开区县数据。</div></div>'
+    ).format(m=crep_month or "实时")
+
+
+def city_check_strip(got, crep, crep_month=""):
+    """gotohui(聚汇数据) 城市级行情 + 与 creprice 区县均值的交叉校对。"""
+    if not got:
+        return ""
+    rows = []
+    for city in ["沈阳", "大连"]:
+        g = got.get(city) or {}
+        sp = g.get("second_price")
+        rp = g.get("rent_rate")
+        # creprice 该市全部区县租金的简单均值（对比用）
+        cr = crep.get(city) or {}
+        avg = [v.get("rent_rate") for v in cr.values() if v and v.get("rent_rate")]
+        crep_avg = (sum(avg) / len(avg)) if avg else None
+        chk = ""
+        if rp and crep_avg:
+            diff = "较区县均值" + ("高" if rp > crep_avg else "低") + "{:.0f}%".format(
+                abs(rp - crep_avg) / crep_avg * 100.0)
+            chk = '<span class="chk">' + diff + "</span>"
+        rows.append(
+            "<div class='chk-col'><h4>{c}</h4>"
+            "<div class='chk-kv'><span>二手均价</span><b>{sp}</b>元/㎡</div>"
+            "<div class='chk-kv'><span>新房均价</span><b>{np}</b>元/㎡</div>"
+            "<div class='chk-kv'><span>月均房租</span><b>{rp}</b>元/月/㎡{chk}</div>"
+            "</div>".format(c=city,
+                            sp=("{:,.0f}".format(sp) if sp else "—"),
+                            np=("{:,.0f}".format(g.get("new_price")) if g.get("new_price") else "—"),
+                            rp=("{:.0f}".format(rp) if rp else "—"),
+                            chk=chk))
+    return (
+        '<div class="sec-t"><span class="dot" style="background:#9b6bd6"></span>'
+        '<h2>城市市场台账</h2>'
+        '<span class="cnt">gotohui.com 聚汇数据</span></div>'
+        '<div class="panel chk-grid">' + "".join(rows) +
+        '<div class="mk-note">来源：聚汇数据房价频道城市页(fjdata-215/216)。月均房租为城市口径'
+        ' 元/月/㎡；"较区县均值"是与本报告里 creprice 全部区县租金的简单均值做的独立交叉校对，'
+        '两源相互印证，辅助判断行情可信度。</div></div>'
+    )
+
+
+def build_html(msg, recs, coll_log, online, date=None, crep=None, crep_month="", got=None):
+    """组合最终 HTML 报告。recs: 全量排序记录。date: 行情日期(默认取 config)。
+    crep: creprice.cn 区县市场行情 {city:{区:{price_rate,rent_rate}}}；空则隐藏行情面板。
+    got: gotohui 聚汇数据 城市级行情 {city:{...}}。”"""
     by_city = {}
     for r in recs:
         by_city.setdefault(r["city"], []).append(r)
@@ -194,12 +269,15 @@ def build_html(msg, recs, coll_log, online):
     src_html = ""
     for line in coll_log:
         src_html += '<div class="log">• ' + line + "</div>"
+    market_html = market_panel(crep, crep_month)
+    check_html = city_check_strip(got, crep, crep_month)
 
     html = _TEMPLATE.format(
-        date=CURR_FILE, kpi=kpi, verdict=verdict, bar=bar, top=TOP_N,
+        date=date or CURR_FILE, kpi=kpi, verdict=verdict, bar=bar, top=TOP_N,
         b0=int(BUDGET_WAN), city_sy="沈阳 · 候选清单", city_dl="大连 · 候选清单",
         cards_sy=cards_sy, cards_dl=cards_dl, table_rows=table,
-        src_html=src_html, msg=msg, online=online,
+        src_html=src_html, msg=msg, online=online, market=market_html,
+        check=check_html,
     )
     return html
 
@@ -280,6 +358,30 @@ _TEMPLATE = """<!DOCTYPE html>
   /* --- 对比图面板 --- */
   .panel{{background:rgba(255,255,255,.86);border:1px solid var(--rule);border-radius:18px;
         padding:20px 22px;box-shadow:0 2px 10px rgba(27,35,51,.04)}}
+
+  /* --- 区县市场行情面板 --- */
+  .mk-grid{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
+  .mk-col h4{{font-size:15px;font-weight:800;margin:0 0 10px;color:var(--ink)}}
+  .mk{{width:100%;border-collapse:collapse}}
+  .mk th{{font-size:11px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--rule)}}
+  .mk td{{padding:7px 8px;border-bottom:1px dashed var(--rule);font-size:13.5px}}
+  .mk td:first-child{{font-weight:700}}
+  .mk td:nth-child(2){{color:var(--warn);font-weight:600}}
+  .mk td:nth-child(3){{color:var(--accent2);font-weight:600}}
+  .mk-note{{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:6px;
+        padding-top:10px;border-top:1px solid var(--rule)}}
+  @media(max-width:720px){{.mk-grid{{grid-template-columns:1fr}}}}
+
+  /* --- 城市市场台账(聚汇数据) --- */
+  .chk-grid{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
+  .chk-col h4{{font-size:15px;font-weight:800;margin:0 0 10px;color:var(--ink)}}
+  .chk-kv{{display:flex;align-items:baseline;gap:8px;font-size:13.5px;
+        padding:6px 0;border-bottom:1px dashed var(--rule)}}
+  .chk-kv span{{color:var(--muted);width:76px;flex:0 0 76px}}
+  .chk-kv b{{font-size:16px;color:var(--ink)}}
+  .chk-kv b:first-of-type{{margin-right:2px}}
+  .chk{{margin-left:auto;font-size:11px;color:var(--accent2);font-weight:600}}
+  @media(max-width:720px){{.chk-grid{{grid-template-columns:1fr}}}}
 
   /* --- 房源卡片（双列） --- */
   .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}}
@@ -362,6 +464,10 @@ _TEMPLATE = """<!DOCTYPE html>
 
   <div class="panel">{bar}</div>
 
+  {check}
+
+  {market}
+
   <div class="sec-t"><span class="dot"></span><h2>{city_sy}</h2>
     <span class="cnt">候选 {top} 席 · 蓝色系</span></div>
   <div class="grid">{cards_sy}</div>
@@ -402,7 +508,7 @@ def build_no_data_html(date, coll_log, offline=False):
     else:
         tip = ("本次联网采集未获取到任何真实房源/板块数据（可能因目标平台反爬限制）。"
                "为避免用虚拟数据影响你的判断，程序不输出任何估算分数或推荐标的。")
-    return _NO_DATA_TEMPLATE.format(date=date, src_html=src_html, tip=tip)
+    return _NO_DATA_TEMPLATE.format(date=date or CURR_FILE, src_html=src_html, tip=tip)
 
 
 _NO_DATA_TEMPLATE = """<!DOCTYPE html>

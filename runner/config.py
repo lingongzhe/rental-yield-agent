@@ -8,7 +8,7 @@ YIELD_MID = 2.5            # 租售比中间线(%)，低于此给低分
 NET_YIELD_FLOOR = 3.5      # 净回报率门槛(%)，低于不进推荐
 RENT_EASE_FLOOR = 60.0     # 出租易度分门槛，低于不进推荐
 TOP_N = 6                  # 每城推荐条数
-CURR_FILE = datetime.date.today().isoformat()   # 行情日期：自动取当天，仅用于展示
+CURR_FILE = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")   # 行情时间：自动取当前，仅用于展示
 
 # 出租容易度评分权重（合计100）
 WEIGHTS = {
